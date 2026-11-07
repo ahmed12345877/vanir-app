@@ -1,163 +1,69 @@
-# Vanir Mobile
+<div align="center">
 
-React Native mobile shell for the existing VANIR web platform.
+# 👑 Vanir Travel Gold — Android & Mobile App
+### The Official Ultra-Luxury Travel & VIP Concierge Mobile Experience
 
-## CI/CD (GitHub Actions)
+[![Website](https://img.shields.io/badge/Live_Platform-vanirgroup.com-d4af37?style=for-the-badge&logo=google-chrome&logoColor=black)](https://vanirgroup.com)
+[![Release](https://img.shields.io/github/v/release/ahmed12345877/vanir-app?color=d4af37&label=Release&style=for-the-badge)](https://github.com/ahmed12345877/vanir-app/releases)
+[![Download AAB](https://img.shields.io/badge/Download-Production_AAB_(77MB)-00FF88?style=for-the-badge&logo=android&logoColor=black)](https://github.com/ahmed12345877/vanir-app/releases/download/v1.0.0/VanirTravelGold.aab)
+[![Author](https://img.shields.io/badge/Author-Ahmed_Roshdi-0A66C2?style=for-the-badge&logo=github)](https://github.com/ahmed12345877)
 
-This repository includes:
+<br/>
 
-- `android-ci.yml`: Builds Android debug APK on push/PR.
-- `firebase-distribution.yml`: Manual workflow to build Android release APK and upload it to Firebase App Distribution.
+<p align="center">
+  <img src="https://img.shields.io/badge/Android_SDK_34-3DDC84?style=flat-square&logo=android&logoColor=white" />
+  <img src="https://img.shields.io/badge/Java_17-ED8B00?style=flat-square&logo=openjdk&logoColor=white" />
+  <img src="https://img.shields.io/badge/Gradle_8.13-02303A?style=flat-square&logo=gradle&logoColor=white" />
+  <img src="https://img.shields.io/badge/React_Native-20232A?style=flat-square&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/Hermes_Engine-5A3E85?style=flat-square&logo=hermes&logoColor=white" />
+</p>
 
-### Required GitHub Secrets
+</div>
 
-Add the following repository secrets in:
-`Settings > Secrets and variables > Actions`
+---
 
-1. `FIREBASE_SERVICE_ACCOUNT_JSON`
-   - Full JSON content of Firebase service account key.
-2. `FIREBASE_APP_ID_ANDROID`
-   - Firebase Android App ID (example: `1:1234567890:android:abcdef...`).
+## 🏛️ Overview
 
-### Trigger Firebase distribution
+**Vanir Travel Gold** is the sovereign mobile application of the Vanir Travel Group. Designed specifically for Android and high-end handheld devices, it delivers instantaneous access to bespoke Egypt itineraries, private jet charter requests, 5-star Nile cruise packages, and direct VIP concierge communication.
 
-Go to:
-`Actions > Firebase App Distribution (Android) > Run workflow`
-and optionally add release notes.
+---
 
-## Prerequisites
+## 📦 Production Release Artifacts
 
-- Node.js `22.11.0` (see `.nvmrc`)
-- npm `10+`
-- JDK `17`
-- Android SDK / Android Studio
+Official Google Play Console ready build is published under GitHub Releases:
+- **Direct Asset:** [`VanirTravelGold.aab`](https://github.com/ahmed12345877/vanir-app/releases/download/v1.0.0/VanirTravelGold.aab) (Signed Android App Bundle, 77 MB)
+- **Target SDK:** Android 34 (UpsideDownCake)
+- **Min SDK:** Android 24 (Nougat)
 
-### Use the project Node version
+---
 
-```bash
-nvm use
-node -v
-```
+## 🚀 Building & Running Locally
 
-If `nvm use` fails, install the version first:
+### Prerequisites
+- Node.js `22.x` or `18.x`
+- JDK 17 (e.g. Amazon Corretto 17)
+- Android Studio / Android SDK Platform-Tools
 
-```bash
-nvm install 22.11.0
-nvm use 22.11.0
-```
-
-## Firebase setup
-
-This mobile app targets the same Firebase project already used by the web app:
-
-- Project ID: `gen-lang-client-0364375301`
-- Auth domain: `gen-lang-client-0364375301.firebaseapp.com`
-- Storage bucket: `gen-lang-client-0364375301.firebasestorage.app`
-- Messaging sender ID: `1001729880037`
-- App ID: `1:1001729880037:web:0cf4200a2a48e96547090c`
-
-Before running the app:
-
-1. Download `google-services.json` for Android from the same Firebase project and place it at `android/app/google-services.json`.
-2. Download `GoogleService-Info.plist` for iOS from the same Firebase project and place it in `ios/VanirMobile/GoogleService-Info.plist`.
-3. Set the Google web client ID in `src/config/appConfig.ts` if you want mobile Google sign-in enabled.
-
-## Install
-
-Run from the repository root:
-
-```bash
-npm install
-```
-
-## Android Build Setup (macOS)
-
-If Android Studio or Gradle cannot find Android SDK, complete this setup first.
-
-### 1) Required versions
-
-- Node.js: 22.11.0 or newer (project uses `.nvmrc` and `engines.node >= 22.11.0`)
-- JDK: 17
-- Android Studio with Android SDK installed
-
-### 2) Use Node 22
-
-```bash
-nvm install 22.11.0
-nvm use 22.11.0
-node -v
-```
-
-### 3) Install and select JDK 17
-
-```bash
-brew install --cask temurin@17
-export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-java -version
-```
-
-### 4) Android SDK path
-
-Default macOS SDK path is:
-
-```text
-/Users/zaad_1/Library/Android/sdk
-```
-
-Project local SDK config is set in `android/local.properties`:
-
-```properties
-sdk.dir=/Users/<your-username>/Library/Android/sdk
-```
-
-If your SDK is installed elsewhere, update the path in `android/local.properties`.
-
-### 5) Install required Android SDK packages
-
-From Android Studio SDK Manager, make sure these are installed:
-
-- Android SDK Platform 36
-- Android SDK Build-Tools 36.0.0
-- Android SDK Command-line Tools (latest)
-- Android Emulator
-- Android SDK Platform-Tools
-
-### 6) Build clean + run
-
+### Build Production Bundle (.aab)
 ```bash
 cd android
-./gradlew clean
-cd ..
-npm install
-npm run android
+./gradlew bundleRelease
 ```
 
-## Run
-
+### Build Production APK (.apk)
 ```bash
-npm run android
-npm run ios
-```
-
-## Android clean build checklist
-
-If Android build fails, run this sequence from the repository root:
-
-```bash
-nvm use
-node -v
-npm install
 cd android
-./gradlew clean
-./gradlew assembleDebug --stacktrace
+./gradlew assembleRelease
 ```
 
-## API base URL
+---
 
-Development defaults are defined in `src/config/appConfig.ts`:
+## 👥 Authors & Leadership
 
-- Android emulator: `http://10.0.2.2:3000`
-- iOS simulator: `http://localhost:3000`
-- Production: `https://vanirgroup.com`
+- **[Ahmed Roshdi](https://github.com/ahmed12345877)** — Founder & Chief Executive Officer, Vanir Group
+- **Vanir Mobile Engineering Team**
 
-Update these values if your backend is hosted elsewhere.
+---
+
+## 📄 License
+Licensed under the [MIT License](LICENSE).
