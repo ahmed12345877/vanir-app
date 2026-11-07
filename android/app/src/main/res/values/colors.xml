@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#000000</color>
+    <!-- Gold accent used as the default FCM notification icon tint (#C9A84C). -->
+    <color name="fcm_notification_color">#C9A84C</color>
+</resources>

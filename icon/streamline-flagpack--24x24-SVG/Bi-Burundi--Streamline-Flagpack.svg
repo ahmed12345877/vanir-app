@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Bi-Burundi--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    BI Burundi Streamline Icon: https://streamlinehq.com
+  </desc>
+  <g clip-path="url(#a)">
+    <path fill="#5eaa22" d="M2 4h28s2 0 2 2v20s0 2-2 2H2s-2 0-2-2V6s0-2 2-2"></path>
+    <mask id="b" width="48" height="30" x="-8" y="1" fill="#000000" maskUnits="userSpaceOnUse">
+      <path fill="#ffffff" d="M-8 1h48v30H-8z"></path>
+      <path fill-rule="evenodd" d="M16 16 32 4H0l16 12Zm0 0L0 28h32L16 16Z" clip-rule="evenodd"></path>
+    </mask>
+    <path fill="#dd2c2b" fill-rule="evenodd" d="M16 16 32 4H0l16 12Zm0 0L0 28h32L16 16Z" clip-rule="evenodd"></path>
+    <path fill="#ffffff" d="m32 4 1.5 2 6-4.5H32V4ZM0 4V1.5h-7.5l6 4.5L0 4Zm0 24-1.5-2-6 4.5H0V28Zm32 0v2.5h7.5l-6-4.5-1.5 2ZM30.5 2l-16 12 3 4 16-12-3-4ZM0 6.5h32v-5H0v5ZM17.5 14 1.5 2l-3 4 16 12 3-4Zm-3 0-16 12 3 4 16-12-3-4ZM0 30.5h32v-5H0v5ZM33.5 26l-16-12-3 4 16 12 3-4Z" mask="url(#b)"></path>
+    <path fill="#ffffff" fill-rule="evenodd" d="M16 22a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" clip-rule="evenodd"></path>
+    <path fill="#dd2c2b" fill-rule="evenodd" stroke="#5eaa22" stroke-width=".25" d="m15.43 14.387-1.162.013.592-1-.592-1 1.162.013L16 11.4l.57 1.013 1.162-.013-.592 1 .592 1-1.162-.013L16 15.4l-.57-1.013Zm-2.5 4.1-1.162.013.592-1-.592-1 1.162.013.57-1.013.57 1.013 1.162-.013-.592 1 .592 1-1.162-.013-.57 1.013-.57-1.013Zm5 0-1.162.013.592-1-.592-1 1.162.013.57-1.013.57 1.013 1.162-.013-.592 1 .592 1-1.162-.013-.57 1.013-.57-1.013Z" clip-rule="evenodd"></path>
+  </g>
+  <defs>
+    <clipPath id="a">
+      <path fill="#ffffff" d="M0 0h32v32H0z"></path>
+    </clipPath>
+  </defs>
+</svg>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Dj-Djibouti--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    DJ Djibouti Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#73be4a" fill-rule="evenodd" d="M.32 5.22v23.52h31.36V5.22H.32Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M.32 5.22v23.52h31.36V5.22H.32Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#6699FF" fill-rule="evenodd" d="M.32 3.26v13.72h31.36V3.26H.32Z" clip-rule="evenodd"></path>
+  </g>
+  <path fill="#ffffff" fill-rule="evenodd" d="M.32 5.22v23.52l17.64-11.76L.32 5.22Z" clip-rule="evenodd"></path>
+  <mask id="b" width="18" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M.32 5.22v23.52l17.64-11.76L.32 5.22Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#b)">
+    <path fill="#e31d1c" fill-rule="evenodd" d="M7.182 19.0086 5.3494 20.116l.4174-2.1599-1.5268-1.617 2.0678-.0863.8742-2.0168.8741 2.0168H10.12l-1.5229 1.7033.4586 2.1599-1.8737-1.1074Z" clip-rule="evenodd"></path>
+  </g>
+</svg>

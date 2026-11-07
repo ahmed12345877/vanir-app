@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Zw-Zimbabwe--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    ZW Zimbabwe Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#f7fcff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#feca00" fill-rule="evenodd" d="M0 6v20h32V6H0Z" clip-rule="evenodd"></path>
+    <path fill="#272727" stroke="#e31d1c" stroke-width="3.5" d="M0 12.25h-1.75v7.5h35.5v-7.5H0Z"></path>
+    <path fill="#5eaa22" fill-rule="evenodd" d="M0 8V4h32v4H0Zm0 20v-4h32v4H0Z" clip-rule="evenodd"></path>
+  </g>
+  <mask id="b" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+    <path fill="#5eaa22" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#b)">
+    <path fill="#f7fcff" stroke="#272727" stroke-width="2" d="M.597 3.198-1 2.009V29.96l1.587-1.15 16.331-11.85 1.102-.799-1.092-.812L.597 3.198Z"></path>
+  </g>
+  <mask id="c" width="22" height="32" x="-2" y="0" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" stroke="#ffffff" stroke-width="2" d="M.597 3.198-1 2.009V29.96l1.587-1.15 16.331-11.85 1.102-.799-1.092-.812L.597 3.198Z"></path>
+  </mask>
+  <g mask="url(#c)">
+    <path fill="#e31d1c" fill-rule="evenodd" d="M7.478 18.278 3.7 21.328l1.734-4.076-2.979-2.868H5.97l1.443-3.46 1.532 3.46h3.51l-3.136 2.868 1.569 4.076-3.41-3.05Z" clip-rule="evenodd"></path>
+    <path fill="#feca00" fill-rule="evenodd" d="M5.017 12.421s-.054-.132.27-.249c.323-.117.422-.365.676-.182.254.182.413-.185.485.341.073.526.274 1.355.274 1.355l3.287 2.471h-.617s-.962 1.413-.803 2.653c0 0-.664-.1-1.563-.1-.9 0-1.489.215-1.489.215L5.017 17s.189-.323.27-.584c.08-.26.415-.308.415-.515 0-.207-.33-.381-.165-.917.165-.537.165-2.141.165-2.141s-.522-.23-.416-.23c.107 0 .349-.193.175-.193h-.444Z" clip-rule="evenodd"></path>
+    <path stroke="#0a0a0a" stroke-width=".25" d="m6.722 13.686-.122.03.011.043.036.027 2.988 2.246h-.309l-.037.055.103.07-.104-.07v.001l-.003.004-.008.013a4.478 4.478 0 0 0-.141.23c-.09.155-.207.374-.32.634-.205.473-.4 1.093-.366 1.697a12.662 12.662 0 0 0-1.424-.082c-.46 0-.84.055-1.107.11a4.17 4.17 0 0 0-.295.073l-.473-1.749.007-.011c.02-.036.046-.085.075-.144a2.78 2.78 0 0 0 .173-.408c.026-.086.094-.14.194-.215l.003-.003c.044-.033.098-.073.14-.122a.32.32 0 0 0 .084-.213.46.46 0 0 0-.063-.214 2.708 2.708 0 0 0-.036-.064 1.245 1.245 0 0 1-.057-.11c-.05-.11-.087-.257-.015-.493.046-.146.077-.358.1-.584.024-.23.04-.483.05-.718a22.455 22.455 0 0 0 .02-.804l.001-.053v-.018h-.125.125v-.082l-.075-.033-.005-.002-.016-.007-.057-.026a7.449 7.449 0 0 1-.135-.063.433.433 0 0 0 .075-.08.181.181 0 0 0 .033-.1.149.149 0 0 0-.08-.132.223.223 0 0 0-.106-.023H5.31l.018-.006a1.19 1.19 0 0 0 .23-.115l.072-.046c.03-.02.054-.036.08-.051a.174.174 0 0 1 .083-.028c.017 0 .047.006.096.041a.46.46 0 0 0 .365.069.237.237 0 0 1 .022-.003c.012.02.03.072.048.191.037.268.106.611.165.885a25.084 25.084 0 0 0 .102.446l.006.027.002.007v.002l.122-.029Z"></path>
+  </g>
+</svg>

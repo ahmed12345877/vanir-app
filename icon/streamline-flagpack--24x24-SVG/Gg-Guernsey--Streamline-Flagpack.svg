@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Gg-Guernsey--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    GG Guernsey Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#f7fcff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#e31d1c" fill-rule="evenodd" d="M12 4h8v8h12v8H20v8h-8v-8H0v-8h12V4Z" clip-rule="evenodd"></path>
+    <path fill="#feca00" fill-rule="evenodd" d="M13.005 7.046 14 8.8V14H6.865v-.057l-1.759-.998v5.96L6.771 18H14v5.05l-.995 1.755h5.96l-.956-1.76H18V18h7.2l1.665.906v-5.96l-1.759.997V14H18V8.805h.009l.957-1.76h-5.96Z" clip-rule="evenodd"></path>
+  </g>
+</svg>

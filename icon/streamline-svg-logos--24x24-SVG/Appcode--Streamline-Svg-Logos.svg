@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 96 96" id="Appcode--Streamline-Svg-Logos" height="24" width="24">
+  <desc>
+    Appcode Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#087cfa" d="m72.8311 94.9998 22.1682-58.6127-17.6249-3.995-4.5433 62.6077Z"></path>
+  <path fill="url(#a)" d="M94.7261 76.3955 72.832 94.9996l-31.2451-8.0487 53.1392-10.5554Z"></path>
+  <path fill="url(#b)" d="m12.7004 44.0636-9.98751-28.572L52.5817 1 12.7004 44.0636Z"></path>
+  <path fill="url(#c)" d="M83.0147 55.4219 69.0225 31.5401l.2643-.1665L52.5823 1 1 56.7046v38.295l93.7255-18.6041-11.7108-20.9736Z"></path>
+  <path fill="#000000" d="M18.625 18.625h58.7498v58.7498H18.625V18.625Z"></path>
+  <path fill="#ffffff" d="M25.9493 66.271h22.0312v3.6718H25.9493V66.271Zm41.213-37.2963-3.1137 3.5935c-1.4906-1.5488-3.5305-2.4492-5.6792-2.5067-3.6988 0-6.3827 3.0354-6.4419 6.7862l-.001.1953c0 3.8089 2.634 6.9814 6.4429 6.9814 2.3631 0 3.8761-.8502 5.5132-2.2812l.2406-.2136c.0403-.0362.0807-.0728.1212-.1098l3.0746 3.1529c-2.2782 2.6275-5.632 4.0701-9.1063 3.9167-3.0363.0508-5.9634-1.1324-8.1117-3.2788-2.1053-2.1035-3.2861-4.9557-3.2871-7.9268l.0014-.2408c-.0545-3.0797 1.1517-6.0479 3.3389-8.2166 2.1872-2.1687 5.1655-3.3496 8.2446-3.269 3.275-.1642 6.4641 1.0794 8.7635 3.4173Zm-28.9539-3.0061 9.3804 22.0606h-5.0329l-1.9583-4.8958h-9.3021l-1.9583 4.8958h-4.8958l9.3608-22.0606h4.4062Zm-2.2716 5.7869-2.9375 7.1087h5.875l-2.9375-7.1087Z"></path>
+  <defs>
+    <linearGradient id="a" x1="41.587" x2="5355.5" y1="1006.6" y2="1006.6" gradientUnits="userSpaceOnUse">
+      <stop offset=".19" stop-color="#07c3f2"></stop>
+      <stop offset=".9" stop-color="#087cfa"></stop>
+    </linearGradient>
+    <linearGradient id="b" x1="2.713" x2="4989.59" y1="2154.18" y2="2154.18" gradientUnits="userSpaceOnUse">
+      <stop offset=".19" stop-color="#07c3f2"></stop>
+      <stop offset=".9" stop-color="#087cfa"></stop>
+    </linearGradient>
+    <linearGradient id="c" x1="6153.3" x2="1505.61" y1="9699.61" y2="3212.77" gradientUnits="userSpaceOnUse">
+      <stop offset=".09" stop-color="#21d789"></stop>
+      <stop offset=".48" stop-color="#07c3f2"></stop>
+      <stop offset=".9" stop-color="#087cfa"></stop>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Ao-Angola--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    AO Angola Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#1d1d1d" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#f50100" fill-rule="evenodd" d="M0 4v12h32V4H0Z" clip-rule="evenodd"></path>
+    <path fill="#ffea42" d="m9.933 9.897.427-1.405c3.2.976 5.13 2.689 5.672 5.131.36 1.62.197 3.07-.386 4.36-.415.918-.942 1.604-1.7 2.377-1.262 1.288-3.34 2.11-5.217 1.76a10.5 10.5 0 0 1-3.61-1.375l.766-1.252a9.039 9.039 0 0 0 3.111 1.184c1.355.252 2.961-.384 3.906-1.347.648-.66 1.08-1.222 1.41-1.953.453-1.005.58-2.13.29-3.434-.414-1.864-1.932-3.211-4.669-4.046Z"></path>
+    <g filter="url(#b)">
+      <path fill="#fcff01" fill-rule="evenodd" d="m9.846 13.464-.95.658.336-1.102-.922-.695 1.157-.024.38-1.087.38 1.087 1.156.024-.922.695.335 1.102-.95-.658Z" clip-rule="evenodd"></path>
+      <path fill="#ffea42" fill-rule="evenodd" d="m9.846 13.464-.95.658.336-1.102-.922-.695 1.157-.024.38-1.087.38 1.087 1.156.024-.922.695.335 1.102-.95-.658Z" clip-rule="evenodd"></path>
+    </g>
+    <g filter="url(#c)">
+      <path fill="#fcff01" fill-rule="evenodd" d="M7.614 13.86s-1.684 2.468-.358 3.37c1.326.903 8.337 4.708 8.337 4.708s1.45-.009 1.655.3c.206.308.635.67.816.67.18 0 .648-.326.648-.326s.363-.298 0-.644c-.364-.347-2.288-1.532-2.288-1.532s-7.508-4.792-8.146-5.266c-.639-.474-.664-1.28-.664-1.28Z" clip-rule="evenodd"></path>
+      <path fill="#ffea42" fill-rule="evenodd" d="M7.614 13.86s-1.684 2.468-.358 3.37c1.326.903 8.337 4.708 8.337 4.708s1.45-.009 1.655.3c.206.308.635.67.816.67.18 0 .648-.326.648-.326s.363-.298 0-.644c-.364-.347-2.288-1.532-2.288-1.532s-7.508-4.792-8.146-5.266c-.639-.474-.664-1.28-.664-1.28Z" clip-rule="evenodd"></path>
+    </g>
+    <path fill="#ffea42" fill-rule="evenodd" d="m11.712 8.074-.39.883 1.278.553.363-.883-1.251-.553Zm2.613 1.41-.704.66.96 1.01.679-.672-.935-.998Zm.961 2.652.9-.348.494 1.276-.881.368-.513-1.296Zm1.753 2.5-.964-.03-.035 1.392.955.005.044-1.367Zm-1.192 2.558.883.39-.553 1.25-.883-.362.553-1.278Zm-.523 3.008-.66-.704-1.01.96.672.68.998-.936Zm-2.647.965.348.9-1.275.493-.368-.88 1.295-.513Zm-2.494 1.754.031-.964-1.392-.035-.006.955 1.367.044Zm-2.551-1.193-.39.883-1.251-.553.362-.883 1.279.553Z" clip-rule="evenodd"></path>
+  </g>
+  <defs>
+    <filter id="b" width="3.073" height="2.907" x="8.31" y="11.214" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"></feColorMatrix>
+      <feOffset></feOffset>
+      <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"></feColorMatrix>
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_1660_12123"></feBlend>
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_1660_12123" result="shape"></feBlend>
+    </filter>
+    <filter id="c" width="12.126" height="9.048" x="6.747" y="13.86" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"></feColorMatrix>
+      <feOffset></feOffset>
+      <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"></feColorMatrix>
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_1660_12123"></feBlend>
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_1660_12123" result="shape"></feBlend>
+    </filter>
+  </defs>
+</svg>

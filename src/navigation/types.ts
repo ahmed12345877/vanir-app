@@ -1,0 +1,336 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
+import type { SearchParams } from '../components/SearchCard';
+
+type ExploreSearchCategory = 'all' | 'tours' | 'packages' | 'daytrips';
+
+export type RootStackParamList = {
+  MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
+  Login: undefined;
+  Signup: undefined;
+  Booking: {
+    type?: string;
+    id?: string;
+    itemName?: string;
+    bookingType?: string;
+    price?: number | string;
+    city?: string;
+    image?: string;
+    images?: string[];
+    apartmentId?: string;
+    stayType?: string;
+    startDate?: string;
+    endDate?: string;
+    guestsCount?: number;
+    roomType?: string;
+    holdId?: string;
+    holdExpiresAt?: number;
+    hotelId?: string;
+    destination?: string;
+    [key: string]: any;
+  } | undefined;
+  Reviews: undefined;
+  Destinations: undefined;
+  Offers: undefined;
+  Blog: undefined;
+  BlogPost: { slug: string; title?: string };
+  Gallery: { initialCategory?: string } | undefined;
+  AIStudio: undefined;
+  SearchResults: {
+    params?: Omit<SearchParams, 'category'> & {
+      category: SearchParams['category'] | ExploreSearchCategory;
+    };
+  };
+  ServiceBooking: {
+    serviceType: string;
+    title?: string;
+    subtitle?: string;
+    formFields?: any[];
+    prefillItem?: string;
+    price?: string;
+  };
+  FlightBooking?: {
+    origin?: string;
+    destination?: string;
+    airline?: string;
+    airlineCode?: string;
+    prefillOrigin?: string;
+    prefillDestination?: string;
+    prefillDestinationCity?: string;
+  };
+  Dashboard: undefined;
+  TravelPreferences: undefined;
+  PaymentMethods: undefined;
+  DashboardNotifications: undefined;
+  PrivacySecurity: undefined;
+  CustomerSupport: undefined;
+  UserProfile: undefined;
+  Offices: undefined;
+  About: undefined;
+  PrivacyPolicy: undefined;
+  TermsOfService: undefined;
+  LegalInfo: undefined;
+  // Catalog screens (20 items each)
+  PrivateJetCatalog: undefined;
+  HotelCatalog: undefined;
+  FlightCatalog: undefined;
+  YachtCatalog: undefined;
+  LimousineCatalog: undefined;
+  ESIMCatalog: undefined;
+  VisaCatalog: undefined;
+  AirportCatalog: undefined;
+  // Legacy service/booking form screens
+  PrivateJet: undefined;
+  HotelBooking: undefined;
+  HotelSearch: undefined; // <-- I added this line
+  Yacht: undefined;
+  Limousine: undefined;
+  ESIM: undefined;
+  Visa: undefined;
+  Airport: undefined;
+  Tours: {
+    initialCategory?: 'all' | 'day-trips' | 'packages' | 'cultural';
+    destinationQuery?: string;
+    destinationTitle?: string;
+  } | undefined;
+  AIConcierge: undefined;
+  HotelDetails: {
+    hotelId?: string;
+    hotelName?: string;
+    location?: string;
+    price?: string;
+    image?: string;
+    images?: string[];
+    description?: string;
+    rating?: number;
+    country?: string;
+  } | undefined;
+  JetDetails: {
+    jetId?: string;
+    jetName?: string;
+    category?: string;
+    range?: string;
+    speed?: string;
+    pax?: string;
+    price?: string;
+    image?: string;
+    images?: string[];
+    description?: string;
+    rating?: number;
+    tailNumber?: string;
+    flatRoutePrice?: number;
+    hourlyRate?: number;
+  } | undefined;
+  PrivateJetDetails: {
+    jetId?: string;
+    jetName?: string;
+    category?: string;
+    range?: string;
+    speed?: string;
+    pax?: string;
+    price?: string;
+    image?: string;
+    images?: string[];
+    description?: string;
+    rating?: number;
+    tailNumber?: string;
+    flatRoutePrice?: number;
+    hourlyRate?: number;
+  } | undefined;
+  YachtDetails: {
+    yachtId?: string;
+    yachtName?: string;
+    location?: string;
+    price?: string;
+    image?: string;
+    images?: string[];
+    description?: string;
+    rating?: number;
+    length?: string;
+    builder?: string;
+    guests?: number;
+    cabins?: number;
+    crew?: number;
+  } | undefined;
+  CarDetails: {
+    carId?: string;
+    carName?: string;
+    category?: string;
+    location?: string;
+    price?: string;
+    image?: string;
+    images?: string[];
+    description?: string;
+    rating?: number;
+    passengers?: number;
+    luggage?: number;
+    armored?: boolean;
+    chauffeur?: boolean;
+  } | undefined;
+  LimousineDetails: {
+    carId?: string;
+    carName?: string;
+    category?: string;
+    location?: string;
+    price?: string;
+    image?: string;
+    images?: string[];
+    description?: string;
+    rating?: number;
+    passengers?: number;
+    luggage?: number;
+    armored?: boolean;
+    chauffeur?: boolean;
+  } | undefined;
+  Discover: undefined;
+  Cars: undefined;
+  HotelApartments:
+    | {
+        initialApartmentId?: string;
+        apartmentId?: string;
+      }
+    | undefined;
+  // Modern Flight & Travel Booking Flow (Screens from Design Mockups)
+  TravelPlan: undefined;
+  FlightDetails: {
+    flightId?: string;
+    airline?: string;
+    airlineCode?: string;
+    flightNumber?: string;
+    origin?: string;
+    originCode?: string;
+    destination?: string;
+    destinationCode?: string;
+    departureTime?: string;
+    arrivalTime?: string;
+    duration?: string;
+    pricePerPerson?: number;
+    passengers?: number;
+  } | undefined;
+  SeatSelection: {
+    flightId?: string;
+    airline?: string;
+    airlineCode?: string;
+    flightNumber?: string;
+    origin?: string;
+    originCode?: string;
+    destination?: string;
+    destinationCode?: string;
+    departureTime?: string;
+    arrivalTime?: string;
+    duration?: string;
+    passengers?: number;
+    basePrice?: number;
+    totalPrice?: number;
+    selectedSeats?: string[];
+  } | undefined;
+  PassengerDetails: {
+    flightId?: string;
+    airline?: string;
+    airlineCode?: string;
+    flightNumber?: string;
+    origin?: string;
+    originCode?: string;
+    destination?: string;
+    destinationCode?: string;
+    departureTime?: string;
+    arrivalTime?: string;
+    duration?: string;
+    passengers?: number;
+    basePrice?: number;
+    totalPrice?: number;
+    selectedSeats?: string[];
+  } | undefined;
+  FlightPayment: {
+    flightId?: string;
+    airline?: string;
+    flightNumber?: string;
+    origin?: string;
+    originCode?: string;
+    destination?: string;
+    destinationCode?: string;
+    departureDate?: string;
+    returnDate?: string;
+    departureTime?: string;
+    arrivalTime?: string;
+    duration?: string;
+    cabinClass?: string;
+    passengers?: number;
+    basePrice?: number;
+    taxes?: number;
+    totalPrice?: number;
+    selectedSeats?: string[];
+    airlineCode?: string;
+    checkinUrl?: string;
+    passenger?: {
+      title?: string;
+      firstName?: string;
+      lastName?: string;
+      fullName: string;
+      gender?: string;
+      dob?: string;
+      nationality?: string;
+      idType?: string;
+      passportNumber: string;
+      passportExpiry?: string;
+      passportCountry?: string;
+      email?: string;
+      phone?: string;
+      mealPreference?: string;
+      specialAssistance?: string;
+    };
+  } | undefined;
+  BoardingPass: {
+    flightId?: string;
+    airline?: string;
+    airlineCode?: string;
+    flightNumber?: string;
+    origin?: string;
+    originCode?: string;
+    destination?: string;
+    destinationCode?: string;
+    departureDate?: string;
+    returnDate?: string;
+    departureTime?: string;
+    arrivalTime?: string;
+    duration?: string;
+    gate?: string;
+    selectedSeats?: string[];
+    cabinClass?: string;
+    basePrice?: number;
+    taxes?: number;
+    totalPrice?: number;
+    paymentMethod?: string;
+    transactionId?: string;
+    bookingId?: string;
+    pnr?: string;
+    eTicketNumber?: string;
+    barcodeData?: string;
+    checkinUrl?: string;
+    passenger?: {
+      title?: string;
+      firstName?: string;
+      lastName?: string;
+      fullName: string;
+      gender?: string;
+      dob?: string;
+      nationality?: string;
+      idType?: string;
+      passportNumber: string;
+      passportExpiry?: string;
+      passportCountry?: string;
+      email?: string;
+      phone?: string;
+      mealPreference?: string;
+      specialAssistance?: string;
+    };
+  } | undefined;
+};
+
+export type MainTabParamList = {
+  Explore: undefined;
+  Discover: undefined;
+  Messages: undefined;
+  Services: undefined;
+  Profile: undefined;
+};
+

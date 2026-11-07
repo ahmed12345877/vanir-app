@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Ws-Samoa--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    WS Samoa Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#c51918" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#2e42a5" fill-rule="evenodd" d="M0 4v14h16V4H0Z" clip-rule="evenodd"></path>
+    <path fill="#feffff" fill-rule="evenodd" d="m3.566 11.772-1.06.64.242-1.25-.883-.934 1.195-.05.506-1.166.505 1.166h1.194l-.881.985.265 1.249-1.083-.64Zm8 0-1.06.64.242-1.25-.883-.934 1.195-.05.506-1.166.505 1.166h1.194l-.881.985.265 1.249-1.083-.64Zm-4.1-3.634-.998.602.228-1.175-.831-.88 1.125-.047.476-1.098.476 1.098h1.123l-.83.927.25 1.175-1.02-.602Zm1.08 4.287-.623.377.142-.735-.52-.55.704-.03.297-.685.298.686h.702l-.518.58.156.734-.638-.377Zm-1.137 4.403-1.497.904.342-1.763-1.247-1.32 1.688-.071.714-1.646.714 1.646h1.684l-1.243 1.39.374 1.764-1.53-.904Z" clip-rule="evenodd"></path>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Bw-Botswana--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    BW Botswana Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#42addf" fill-rule="evenodd" d="M2.0622 5.5467v20.9066h27.8756V5.5467H2.0622Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M2.0622 5.5467v20.9066h27.8756V5.5467H2.0622Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#58a5ff" fill-rule="evenodd" d="M2.0622 5.5467v6.9689h27.8756V5.5467H2.0622Z" clip-rule="evenodd"></path>
+    <path fill="#272727" stroke="#f7fcff" stroke-width="2" d="M2.0622 13.3867h-.8711v5.2266h29.6178v-5.2266H2.0622Z"></path>
+  </g>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Gd-Grenada--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    GD Grenada Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#c51918" fill-rule="evenodd" d="M0 4h32v24H0V4Z" clip-rule="evenodd"></path>
+  <path fill="#feca00" fill-rule="evenodd" d="M6 10h20v12H6V10Z" clip-rule="evenodd"></path>
+  <mask id="a" width="20" height="12" x="6" y="10" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M6 10h20v12H6V10Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#23875f" fill-rule="evenodd" d="m6 10 10 6-10 6V10Zm20 0-10 6 10 6V10Z" clip-rule="evenodd"></path>
+    <path fill="#c51918" fill-rule="evenodd" d="M16 20a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" clip-rule="evenodd"></path>
+    <path fill="#feca00" fill-rule="evenodd" d="m15.93 17.314-2.072 1.436.662-2.46L13 14.718l2.059-.085.87-2.433.871 2.433h2.055L17.34 16.29l.76 2.315-2.17-1.291Z" clip-rule="evenodd"></path>
+  </g>
+  <path fill="#feca00" fill-rule="evenodd" d="m8.777 8.442 1.132-.702 1.185.631-.415-1.13.829-.81h-1.123l-.476-1.189-.476 1.189-1.125.041.83.768-.361 1.202Zm6 0 1.132-.702 1.185.631-.415-1.13.829-.81h-1.123l-.476-1.189-.476 1.189-1.125.041.83.768-.361 1.202Zm7.132-.702-1.132.702.361-1.202-.83-.768 1.125-.041.476-1.189.476 1.189h1.123l-.83.81.416 1.13-1.185-.63ZM8.776 26.167l1.132-.702 1.185.631-.415-1.13.829-.81h-1.123l-.476-1.189-.476 1.189-1.125.042.83.767-.361 1.202Zm7.132-.702-1.132.702.361-1.202-.83-.767 1.125-.042.476-1.189.476 1.189h1.123l-.83.81.416 1.13-1.185-.63Zm4.868.702 1.132-.702 1.185.631-.415-1.13.829-.81h-1.123l-.476-1.189-.476 1.189-1.125.042.83.767-.361 1.202Z" clip-rule="evenodd"></path>
+  <path fill="#c51918" fill-rule="evenodd" d="M8.635 16.772s.538.48.832.643c.1-.383-.125-1.252-.125-1.252-.063-.207-.758-.58-.758-.58s-.195.656.05 1.19Z" clip-rule="evenodd"></path>
+  <path fill="#feca00" fill-rule="evenodd" d="M9.196 17.93s-1.383-.646-1.524-1.56c-.14-.913.158-2.37.158-2.37s2.246.511 2.399 1.606c.152 1.096-.355 1.784-.355 1.784s-.52-1.335-1.01-1.484c0 0 0 1.324.332 2.024Z" clip-rule="evenodd"></path>
+</svg>

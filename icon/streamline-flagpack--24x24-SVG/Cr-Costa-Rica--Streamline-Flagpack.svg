@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Cr-Costa-Rica--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    CR Costa Rica Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#2e42a5" fill-rule="evenodd" d="M3.456 6.592v18.816h25.088V6.592H3.456Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M3.456 6.592v18.816h25.088V6.592H3.456Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#e31d1c" stroke="#f7fcff" stroke-width="4" d="M3.456 12.864H1.888v6.272h28.224v-6.272H3.456Z"></path>
+  </g>
+</svg>

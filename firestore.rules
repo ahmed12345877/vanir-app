@@ -1,0 +1,700 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: tours
+// Document ID: {tourId} (e.g. 't1', 't2', or auto-id)
+// Fields:
+//   - name: string (required, 1-200 chars)
+//   - location: string (required, 1-200 chars)
+//   - duration: string (required, 1-100 chars)
+//   - rating: number (required, 0-5)
+//   - reviews: number (required, >= 0)
+//   - price: string (required, 1-50 chars)
+//   - category: string (required, 'all' | 'day-trips' | 'packages' | 'cultural')
+//   - image: string (required, URL, 1-2000 chars)
+//   - images: list (optional, <= 20 string URLs)
+//   - fallbackImage: string (optional, URL, <= 2000 chars)
+//   - badge: string or null (optional, <= 100 chars)
+//   - highlights: list (optional, <= 20 strings, each <= 200 chars)
+//   - status: string (required, 'active' | 'draft')
+//   - updatedAt: string or timestamp (optional)
+//
+// Collection: jets
+// Document ID: {jetId}
+// Fields:
+//   - name: string (required, 1-200 chars)
+//   - tailNumber: string (required, 1-50 chars)
+//   - category: string (required, 'super_midsize' | 'heavy' | 'ultra_long_range')
+//   - status: string (required, 'active' | 'draft')
+//   - guestCapacity: number (required, 1-100)
+//   - flightRange: number (required, >= 0)
+//   - hourlyRate: number (required, >= 0)
+//   - flatRoutePrice: number (optional, >= 0)
+//   - departureCity: string (optional, <= 100 chars)
+//   - arrivalCity: string (optional, <= 100 chars)
+//   - description: string (optional, <= 5000 chars)
+//   - images: list (optional, <= 20 items)
+//
+// Collection: yachts
+// Document ID: {yachtId}
+// Fields:
+//   - name: string (required, 1-200 chars)
+//   - builder: string (optional, <= 100 chars)
+//   - marinaLocation: string (required, 1-200 chars)
+//   - status: string (required, 'active' | 'draft')
+//   - lengthFt: number (optional, >= 0)
+//   - cabins: number (optional, >= 0)
+//   - guestCapacity: number (optional, >= 0)
+//   - crewSize: number (optional, >= 0)
+//   - dailyRate: number (required, >= 0)
+//   - weeklyRate: number (optional, >= 0)
+//   - description: string (optional, <= 5000 chars)
+//   - images: list (optional, <= 20 items)
+//
+// Collection: hotels
+// Document ID: {hotelId}
+// Fields:
+//   - propertyName: string (required, 1-200 chars)
+//   - cityDestination: string (required, 1-200 chars)
+//   - suiteType: string (optional, <= 100 chars)
+//   - nightlyRate: number (required, >= 0)
+//   - status: string (required, 'active' | 'draft')
+//   - description: string (optional, <= 5000 chars)
+//   - images: list (optional, <= 20 items)
+//
+// Collection: transfers
+// Document ID: {transferId}
+// Fields:
+//   - vehicleMakeModel: string (required, 1-200 chars)
+//   - category: string (required, 'sedan' | 'suv' | 'van')
+//   - status: string (required, 'active' | 'draft')
+//   - hourlyRate: number (required, >= 0)
+//   - airportTransferRate: number (optional, >= 0)
+//   - description: string (optional, <= 5000 chars)
+//   - images: list (optional, <= 20 items)
+//
+// Collection: packages
+// Document ID: {packageId}
+// Fields:
+//   - name: string (required, 1-200 chars)
+//   - destination: string (required, 1-200 chars)
+//   - durationNights: number (required, >= 0)
+//   - pricePerPerson: number (required, >= 0)
+//   - status: string (required, 'active' | 'draft')
+//   - description: string (optional, <= 5000 chars)
+//   - images: list (optional, <= 20 items)
+//
+// Collection: destinations
+// Document ID: {destId}
+// Fields:
+//   - name: string (required, 1-200 chars)
+//   - country: string (optional, <= 100 chars)
+//   - description: string (optional, <= 5000 chars)
+//   - image: string (optional, <= 2000 chars)
+//   - status: string (optional, 'active' | 'draft')
+//
+// Collection: offers
+// Document ID: {offerId}
+// Fields:
+//   - title: string (required, 1-200 chars)
+//   - description: string (optional, <= 5000 chars)
+//   - image: string (optional, <= 2000 chars)
+//   - status: string (optional, 'active' | 'draft')
+//
+// Collection: blog_posts
+// Document ID: {postId}
+// Fields:
+//   - title: string (required, 1-200 chars)
+//   - slug: string (optional, <= 200 chars)
+//   - excerpt: string (optional, <= 1000 chars)
+//   - content: string (optional, <= 50000 chars)
+//   - image: string (optional, <= 2000 chars)
+//   - status: string (optional, 'active' | 'draft' | 'published')
+//
+// Collection: gallery
+// Document ID: {imageId}
+// Fields:
+//   - title: string (optional, <= 200 chars)
+//   - url: string (required, <= 2000 chars)
+//   - category: string (optional, <= 100 chars)
+//
+// Collection: reviews
+// Document ID: {reviewId}
+// Fields:
+//   - guest: string (required, 1-100 chars)
+//   - service: string (required, 1-200 chars)
+//   - rating: number (required, 1-5)
+//   - comment: string (required, 1-2000 chars)
+//   - status: string (optional, <= 50 chars)
+//
+// Collection: app_config
+// Document ID: 'services' | 'home_feed'
+// Fields:
+//   - 'services': service toggle booleans & optional emergency_notice / welcome_bg_image
+//   - 'home_feed': feedCards (list <= 50 items)
+//
+// Collection: messages
+// Document ID: {messageId}
+// Fields:
+//   - sender: string (required, 1-100 chars)
+//   - email: string (required, 5-100 chars)
+//   - phone: string (optional, <= 50 chars)
+//   - service: string (optional, <= 200 chars)
+//   - message: string (required, 1-3000 chars)
+//   - createdAt: timestamp or string (optional)
+//
+// Collection: bookings
+// Document ID: {bookingId}
+// Fields:
+//   - userId: string (required, matches request.auth.uid)
+//   - confirmationCode: string (optional, <= 50 chars)
+//   - status: string (required, 'pending' | 'confirmed' | 'completed' | 'cancelled')
+//   - createdAt: timestamp or string (immutable on update)
+//
+// Collection: flight_bookings
+// Document ID: {bookingId}
+// Fields:
+//   - userUid or userId: string (required, matches request.auth.uid)
+//   - pnr: string (optional, <= 50 chars)
+//   - status: string (optional, <= 50 chars)
+//   - createdAt: timestamp or string
+//
+// Collection: service_requests
+// Document ID: {requestId}
+// Fields:
+//   - userId: string (required, matches request.auth.uid)
+//   - serviceType: string (required, <= 64 chars)
+//   - details: map (required)
+//   - status: string (required, 'pending' | 'in-progress' | 'completed' | 'cancelled')
+//   - createdAt: timestamp or string
+//
+// Collection: users
+// Document ID: {userId} (matches request.auth.uid)
+// Fields:
+//   - id: string (optional, matches userId)
+//   - email: string (optional, <= 100 chars)
+//   - displayName / name: string (optional, <= 100 chars)
+//   - phone: string (optional, <= 50 chars)
+//   - avatar: string (optional, <= 2000 chars)
+//   - tier: string (admin-controlled or default)
+//   - walletBalance: number (admin-controlled, immutable by user)
+//   - coins: number (admin-controlled, immutable by user)
+//   - isVerified: bool (admin-controlled, immutable by user)
+//   - memberId: string (admin-controlled, immutable by user)
+//   - assignedConcierge: string (admin-controlled, immutable by user)
+//   - status: string (admin-controlled, immutable by user)
+//   - updatedAt: string or timestamp (optional)
+//   Subcollections:
+//     - users/{userId}/notifications/{notifId}
+//     - users/{userId}/payment_methods/{cardId}
+//     - users/{userId}/flights/{flightId}
+//
+// Collection: room_holds
+// Document ID: {holdId}
+// Fields:
+//   - holdId: string (required, <= 100 chars)
+//   - status: string (required, <= 50 chars)
+//   - createdAt: timestamp or string
+//
+// Collection: reservations
+// Document ID: {confirmationNumber}
+// Fields:
+//   - reservationId: string (required, <= 100 chars)
+//   - confirmationNumber: string (required, <= 100 chars)
+//   - status: string (required, <= 50 chars)
+//   - guest: map (required)
+//   - createdAt: timestamp or string
+//
+// Collection: fcm_tokens
+// Document ID: {token}
+// Fields:
+//   - token: string (required, <= 500 chars)
+//   - platform: string (required, <= 50 chars)
+//   - userId: string or null (optional, <= 128 chars)
+//
+// Collection: vip_notifications_log
+// Document ID: {logId}
+// Fields:
+//   - title: string (required, <= 200 chars)
+//   - body or description: string (optional, <= 2000 chars)
+//   - userId: string (optional, <= 128 chars)
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────────
+    // Core Helper Functions
+    // ─────────────────────────────────────────────────────────────
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        (
+          request.auth.token.email_verified == true &&
+          request.auth.token.email in [
+            'admin@vanirgroup.com',
+            'vip.member@vanirgroup.com',
+            'vanir.concierge@gmail.com',
+            'q2w4115@gmail.com'
+          ]
+        )
+      );
+    }
+
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string &&
+        email.size() <= 100 &&
+        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Domain Validators
+    // ─────────────────────────────────────────────────────────────
+
+    function isValidTour(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.location is string && data.location.size() > 0 && data.location.size() <= 200
+        && data.duration is string && data.duration.size() <= 100
+        && (data.rating is int || data.rating is float) && data.rating >= 0 && data.rating <= 5
+        && (data.reviews is int || data.reviews is float) && data.reviews >= 0
+        && data.price is string && data.price.size() <= 50
+        && data.category is string && data.category in ['all', 'day-trips', 'packages', 'cultural']
+        && data.image is string && data.image.size() <= 2000
+        && data.status is string && data.status in ['active', 'draft']
+        && (!('images' in data) || (data.images is list && data.images.size() <= 20))
+        && (!('highlights' in data) || (data.highlights is list && data.highlights.size() <= 20))
+        && (!('badge' in data) || data.badge == null || (data.badge is string && data.badge.size() <= 100))
+        && (!('fallbackImage' in data) || (data.fallbackImage is string && data.fallbackImage.size() <= 2000));
+    }
+
+    function isValidJet(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.tailNumber is string && data.tailNumber.size() > 0 && data.tailNumber.size() <= 50
+        && data.category is string && data.category in ['super_midsize', 'heavy', 'ultra_long_range']
+        && data.status is string && data.status in ['active', 'draft']
+        && (data.guestCapacity is int || data.guestCapacity is float) && data.guestCapacity >= 0 && data.guestCapacity <= 100
+        && (data.hourlyRate is int || data.hourlyRate is float) && data.hourlyRate >= 0
+        && (!('description' in data) || (data.description is string && data.description.size() <= 5000))
+        && (!('images' in data) || (data.images is list && data.images.size() <= 20));
+    }
+
+    function isValidYacht(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.marinaLocation is string && data.marinaLocation.size() > 0 && data.marinaLocation.size() <= 200
+        && data.status is string && data.status in ['active', 'draft']
+        && (data.dailyRate is int || data.dailyRate is float) && data.dailyRate >= 0
+        && (!('description' in data) || (data.description is string && data.description.size() <= 5000))
+        && (!('images' in data) || (data.images is list && data.images.size() <= 20));
+    }
+
+    function isValidHotel(data) {
+      return data.propertyName is string && data.propertyName.size() > 0 && data.propertyName.size() <= 200
+        && data.cityDestination is string && data.cityDestination.size() > 0 && data.cityDestination.size() <= 200
+        && data.status is string && data.status in ['active', 'draft']
+        && (data.nightlyRate is int || data.nightlyRate is float) && data.nightlyRate >= 0
+        && (!('description' in data) || (data.description is string && data.description.size() <= 5000))
+        && (!('images' in data) || (data.images is list && data.images.size() <= 20));
+    }
+
+    function isValidTransfer(data) {
+      return data.vehicleMakeModel is string && data.vehicleMakeModel.size() > 0 && data.vehicleMakeModel.size() <= 200
+        && data.category is string && data.category in ['sedan', 'suv', 'van']
+        && data.status is string && data.status in ['active', 'draft']
+        && (data.hourlyRate is int || data.hourlyRate is float) && data.hourlyRate >= 0
+        && (!('description' in data) || (data.description is string && data.description.size() <= 5000))
+        && (!('images' in data) || (data.images is list && data.images.size() <= 20));
+    }
+
+    function isValidPackage(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.destination is string && data.destination.size() > 0 && data.destination.size() <= 200
+        && data.status is string && data.status in ['active', 'draft']
+        && (data.pricePerPerson is int || data.pricePerPerson is float) && data.pricePerPerson >= 0
+        && (!('description' in data) || (data.description is string && data.description.size() <= 5000))
+        && (!('images' in data) || (data.images is list && data.images.size() <= 20));
+    }
+
+    function isValidDestination(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && (!('country' in data) || (data.country is string && data.country.size() <= 100))
+        && (!('description' in data) || (data.description is string && data.description.size() <= 5000))
+        && (!('image' in data) || (data.image is string && data.image.size() <= 2000));
+    }
+
+    function isValidOffer(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && (!('description' in data) || (data.description is string && data.description.size() <= 5000))
+        && (!('image' in data) || (data.image is string && data.image.size() <= 2000));
+    }
+
+    function isValidBlogPost(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && (!('slug' in data) || (data.slug is string && data.slug.size() <= 200))
+        && (!('excerpt' in data) || (data.excerpt is string && data.excerpt.size() <= 1000))
+        && (!('content' in data) || (data.content is string && data.content.size() <= 50000))
+        && (!('image' in data) || (data.image is string && data.image.size() <= 2000));
+    }
+
+    function isValidGallery(data) {
+      return data.url is string && data.url.size() > 0 && data.url.size() <= 2000
+        && (!('title' in data) || (data.title is string && data.title.size() <= 200))
+        && (!('category' in data) || (data.category is string && data.category.size() <= 100));
+    }
+
+    function isValidReview(data) {
+      return data.guest is string && data.guest.size() > 0 && data.guest.size() <= 100
+        && data.service is string && data.service.size() > 0 && data.service.size() <= 200
+        && (data.rating is int || data.rating is float) && data.rating >= 1 && data.rating <= 5
+        && data.comment is string && data.comment.size() > 0 && data.comment.size() <= 2000;
+    }
+
+    function isValidAppConfig(data) {
+      return (!('feedCards' in data) || (data.feedCards is list && data.feedCards.size() <= 50))
+        && (!('cards' in data) || (data.cards is list && data.cards.size() <= 50))
+        && (!('emergency_notice' in data) || (data.emergency_notice is string && data.emergency_notice.size() <= 500));
+    }
+
+    function isValidContactMessage(data) {
+      return data.sender is string && data.sender.size() > 0 && data.sender.size() <= 100
+        && data.email is string && isValidEmail(data.email)
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 3000
+        && (!('phone' in data) || (data.phone is string && data.phone.size() <= 50))
+        && (!('service' in data) || (data.service is string && data.service.size() <= 200));
+    }
+
+    function isValidBooking(data) {
+      return data.userId is string && data.userId.size() <= 128
+        && data.status is string && data.status in ['pending', 'confirmed', 'completed', 'cancelled']
+        && (!('confirmationCode' in data) || (data.confirmationCode is string && data.confirmationCode.size() <= 100))
+        && (!('currency' in data) || (data.currency is string && data.currency.size() <= 10))
+        && (!('guestName' in data) || (data.guestName is string && data.guestName.size() <= 100))
+        && (!('guestEmail' in data) || isValidEmail(data.guestEmail))
+        && (!('guestPhone' in data) || (data.guestPhone is string && data.guestPhone.size() <= 50))
+        && (!('passportNumber' in data) || (data.passportNumber is string && data.passportNumber.size() <= 50))
+        && (!('nationality' in data) || (data.nationality is string && data.nationality.size() <= 100))
+        && (!('totalAmount' in data) || ((data.totalAmount is int || data.totalAmount is float) && data.totalAmount >= 0))
+        && (!('amount' in data) || ((data.amount is int || data.amount is float) && data.amount >= 0));
+    }
+
+    function isValidFlightBooking(data) {
+      return (
+        (('userUid' in data) && data.userUid is string && data.userUid.size() <= 128) ||
+        (('userId' in data) && data.userId is string && data.userId.size() <= 128)
+      )
+      && (!('pnr' in data) || (data.pnr is string && data.pnr.size() <= 50))
+      && (!('status' in data) || (data.status is string && data.status.size() <= 50));
+    }
+
+    function isValidServiceRequest(data) {
+      return data.userId is string && data.userId.size() <= 128
+        && data.serviceType is string && data.serviceType.size() <= 64
+        && data.details is map
+        && data.status is string && data.status in ['pending', 'in-progress', 'completed', 'cancelled'];
+    }
+
+    function isValidUserCreate(data, userId) {
+      return (!('id' in data) || data.id == userId)
+        && (!('email' in data) || isValidEmail(data.email))
+        && (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100))
+        && (!('name' in data) || (data.name is string && data.name.size() <= 100))
+        && (!('phone' in data) || (data.phone is string && data.phone.size() <= 50))
+        && (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 2000))
+        // Regular users cannot grant themselves arbitrary high balances or admin roles on create
+        && (!('role' in data) || data.role == 'client')
+        && (!('admin' in data) || data.admin == false);
+    }
+
+    function isValidUserOwnerUpdate(data) {
+      return (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100))
+        && (!('name' in data) || (data.name is string && data.name.size() <= 100))
+        && (!('phone' in data) || (data.phone is string && data.phone.size() <= 50))
+        && (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 2000))
+        && (!('fcmToken' in data) || (data.fcmToken is string && data.fcmToken.size() <= 500))
+        && (!('preferredDestinations' in data) || (data.preferredDestinations is list && data.preferredDestinations.size() <= 30));
+    }
+
+    function isValidRoomHold(data) {
+      return data.holdId is string && data.holdId.size() <= 100
+        && data.status is string && data.status.size() <= 50;
+    }
+
+    function isValidReservation(data) {
+      return data.reservationId is string && data.reservationId.size() <= 100
+        && data.confirmationNumber is string && data.confirmationNumber.size() <= 100
+        && data.status is string && data.status.size() <= 50
+        && data.guest is map;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: Luxury Catalog & Inventory Collections
+    // ─────────────────────────────────────────────────────────────
+
+    match /tours/{tourId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidTour(request.resource.data);
+      allow update: if isAdmin() && isValidTour(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /jets/{jetId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidJet(request.resource.data);
+      allow update: if isAdmin() && isValidJet(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /yachts/{yachtId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidYacht(request.resource.data);
+      allow update: if isAdmin() && isValidYacht(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /hotels/{hotelId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidHotel(request.resource.data);
+      allow update: if isAdmin() && isValidHotel(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /transfers/{transferId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidTransfer(request.resource.data);
+      allow update: if isAdmin() && isValidTransfer(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /packages/{packageId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidPackage(request.resource.data);
+      allow update: if isAdmin() && isValidPackage(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /destinations/{destId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidDestination(request.resource.data);
+      allow update: if isAdmin() && isValidDestination(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /offers/{offerId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidOffer(request.resource.data);
+      allow update: if isAdmin() && isValidOffer(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /blog_posts/{postId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidBlogPost(request.resource.data);
+      allow update: if isAdmin() && isValidBlogPost(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /activities/{activityId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidTour(request.resource.data);
+      allow update: if isAdmin() && isValidTour(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /gallery/{imageId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidGallery(request.resource.data);
+      allow update: if isAdmin() && isValidGallery(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidReview(request.resource.data);
+      allow update: if isAdmin() && isValidReview(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /flights/{flightId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /properties/{propertyId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: App Configuration (Services & Home Feed)
+    // ─────────────────────────────────────────────────────────────
+
+    match /app_config/{configId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidAppConfig(request.resource.data);
+      allow update: if isAdmin() && isValidAppConfig(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: Client Messages & Inquiries (PII Protected)
+    // ─────────────────────────────────────────────────────────────
+
+    match /messages/{messageId} {
+      allow read: if isAdmin();
+      allow create: if isValidContactMessage(request.resource.data);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: Bookings
+    // ─────────────────────────────────────────────────────────────
+
+    match /bookings/{bookingId} {
+      allow read: if (isAuthenticated() && isOwner(resource.data.userId)) || isAdmin();
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && isValidBooking(request.resource.data);
+      allow update: if isAdmin()
+        || (
+          isAuthenticated()
+          && isOwner(resource.data.userId)
+          && request.resource.data.userId == resource.data.userId
+          && isValidBooking(request.resource.data)
+          && areImmutableFieldsUnchanged(['userId', 'createdAt', 'confirmationCode', 'amount', 'totalAmount', 'currency', 'paymentStatus'])
+        );
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: Flight Bookings
+    // ─────────────────────────────────────────────────────────────
+
+    match /flight_bookings/{bookingId} {
+      allow read: if (isAuthenticated() && (
+        (('userUid' in resource.data) && resource.data.userUid == request.auth.uid) ||
+        (('userId' in resource.data) && resource.data.userId == request.auth.uid)
+      )) || isAdmin();
+      allow create: if isAuthenticated()
+        && (
+          (('userUid' in request.resource.data) && request.resource.data.userUid == request.auth.uid) ||
+          (('userId' in request.resource.data) && request.resource.data.userId == request.auth.uid)
+        )
+        && isValidFlightBooking(request.resource.data);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: Service Requests
+    // ─────────────────────────────────────────────────────────────
+
+    match /service_requests/{requestId} {
+      allow read: if (isAuthenticated() && isOwner(resource.data.userId)) || isAdmin();
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && isValidServiceRequest(request.resource.data);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: Room Holds & Reservations
+    // ─────────────────────────────────────────────────────────────
+
+    match /room_holds/{holdId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidRoomHold(request.resource.data);
+      allow update: if isAuthenticated() && isValidRoomHold(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /reservations/{reservationId} {
+      allow read: if (isAuthenticated() && (
+        (('userId' in resource.data) && resource.data.userId == request.auth.uid) ||
+        (('guest' in resource.data) && ('email' in resource.data.guest) && resource.data.guest.email == request.auth.token.email)
+      )) || isAdmin();
+      allow create: if isAuthenticated() && isValidReservation(request.resource.data);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: FCM Push Tokens & Notifications Log
+    // ─────────────────────────────────────────────────────────────
+
+    match /fcm_tokens/{token} {
+      allow read: if isAdmin();
+      allow create, update: if request.resource.data.token is string
+        && request.resource.data.token.size() <= 500
+        && request.resource.data.platform is string
+        && request.resource.data.platform.size() <= 50;
+      allow delete: if isAdmin();
+    }
+
+    match /vip_notifications_log/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated()
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 200;
+      allow update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Rules: User Profiles & User Subcollections (PII Protected)
+    // ─────────────────────────────────────────────────────────────
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if (isAuthenticated() && isOwner(userId) && isValidUserCreate(request.resource.data, userId))
+        || isAdmin();
+      allow update: if isAdmin()
+        || (
+          isAuthenticated()
+          && isOwner(userId)
+          && isValidUserOwnerUpdate(request.resource.data)
+          && areImmutableFieldsUnchanged(['id', 'email', 'tier', 'walletBalance', 'coins', 'isVerified', 'memberId', 'assignedConcierge', 'status', 'role', 'admin'])
+        );
+      allow delete: if isAdmin();
+
+      // Notifications Subcollection
+      match /notifications/{notificationId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      // Saved Masked Payment Methods Subcollection
+      match /payment_methods/{cardId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      // User Confirmed Flights Subcollection
+      match /flights/{flightId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Default Deny
+    // ─────────────────────────────────────────────────────────────
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

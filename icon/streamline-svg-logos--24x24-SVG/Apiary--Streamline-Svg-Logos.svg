@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 96 96" id="Apiary--Streamline-Svg-Logos" height="24" width="24">
+  <desc>
+    Apiary Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#13a049" d="M48.0137 14.4246v26.7933l23.2488-13.4245V1L48.0137 14.4246Z" opacity=".5"></path>
+  <path fill="#a2cc39" d="M48.0135 14.4246 24.7646 1v26.8492l23.2489 13.4245V14.4246Z" opacity=".5"></path>
+  <path fill="url(#a)" d="M71.2625 1 48.0137 14.4246 24.7649 1 1.51611 14.4246 48.0137 41.2737l46.4698-26.8491L71.2625 1Z" opacity=".9"></path>
+  <path fill="url(#b)" d="M48.0137 41.2745 1.51611 14.4253v26.8492L24.7649 54.699v26.8213l23.2488 13.4246 23.2488-13.4246V54.699l23.221-13.4245V14.4253L48.0137 41.2745Z"></path>
+  <path fill="url(#c)" d="M48.0137 41.2745v53.6704l23.2488-13.4246V54.699l23.2209-13.4245V14.4253L48.0137 41.2745Z"></path>
+  <path fill="#231f20" d="M48.0137 68.0947v26.8492l23.2488-13.4246-23.2488-13.4246Z" opacity=".05"></path>
+  <path fill="#231f20" d="M48.0135 95.0001V68.1509L24.7646 81.5755l23.2489 13.4246Z" opacity=".1"></path>
+  <path fill="#231f20" d="M24.7649 27.8491 1.51611 41.2737 24.7649 54.6983l23.2488-13.4246-23.2488-13.4246Z" opacity=".05"></path>
+  <path fill="#231f20" d="M71.2625 27.8491 48.0137 41.2737l23.2488 13.4246 23.2209-13.4246-23.2209-13.4246Z" opacity=".05"></path>
+  <defs>
+    <linearGradient id="a" x1="9299.33" x2="1.516" y1="2014.31" y2="2014.31" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#37bda6"></stop>
+      <stop offset="1" stop-color="#8ad3b8"></stop>
+    </linearGradient>
+    <linearGradient id="b" x1="9299.33" x2="1.516" y1="4040.25" y2="4040.25" gradientUnits="userSpaceOnUse">
+      <stop offset=".5" stop-color="#4bb6ad"></stop>
+      <stop offset="1" stop-color="#78bbc1"></stop>
+    </linearGradient>
+    <linearGradient id="c" x1="47.157" x2="4696.06" y1="4040.25" y2="4040.25" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4379a7"></stop>
+      <stop offset="1" stop-color="#7cc9b8"></stop>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Fm-Federated-States-Of-Micronesia--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    FM Federated States Of Micronesia Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#63b3e1" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#f7fcff" fill-rule="evenodd" d="m16 11.3-1.763.927.336-1.964-1.426-1.39 1.971-.287L16 6.8l.882 1.786 1.971.287-1.426 1.39.336 1.964L16 11.3Zm0 12-1.764.927.337-1.964-1.426-1.39 1.971-.287L16 18.8l.882 1.786 1.971.287-1.427 1.39.337 1.964L16 23.3Zm-6.2-5.8-1.763.927.336-1.963-1.426-1.391 1.971-.287L9.8 13l.882 1.787 1.971.286-1.426 1.39.336 1.964L9.8 17.5Zm12.2 0-1.763.927.336-1.963-1.426-1.391 1.971-.287L22 13l.882 1.787 1.971.286-1.426 1.39.336 1.964L22 17.5Z" clip-rule="evenodd"></path>
+  </g>
+</svg>

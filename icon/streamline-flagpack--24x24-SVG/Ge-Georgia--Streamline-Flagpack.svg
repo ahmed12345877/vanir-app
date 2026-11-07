@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Ge-Georgia--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    GE Georgia Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#f7fcff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#e31d1c" fill-rule="evenodd" d="M14 4h4v10h14v4H18v10h-4V18H0v-4h14V4Z" clip-rule="evenodd"></path>
+    <path fill="#e31d1c" fill-rule="evenodd" d="M9.999 21.222 12.2 21v2s-2.201-.138-2.201-.098c0 .04.201 2.098.201 2.098h-2l.16-2H6.2v-2l2.16.222L8.2 19h2l-.201 2.222Zm0-12L12.2 9v2s-2.201-.138-2.201-.098c0 .04.201 2.098.201 2.098h-2l.16-2H6.2V9l2.16.222L8.2 7h2l-.201 2.222Zm14 0L26.2 9v2s-2.201-.138-2.201-.098c0 .04.201 2.098.201 2.098h-2l.16-2H20.2V9l2.16.222L22.2 7h2l-.201 2.222Zm0 12L26.2 21v2s-2.201-.138-2.201-.098c0 .04.201 2.098.201 2.098h-2l.16-2H20.2v-2l2.16.222L22.2 19h2l-.201 2.222Z" clip-rule="evenodd"></path>
+  </g>
+</svg>

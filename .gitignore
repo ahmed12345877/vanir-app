@@ -1,0 +1,61 @@
+# Dependencies everywhere
+node_modules/
+**/node_modules/
+package-lock (1).json
+package-lock (2).json
+pnpm-lock (1).yaml
+pnpm-lock (2).yaml
+
+# Next.js / React Native / Metro / Expo build artifacts
+.next/
+**/.next/
+out/
+**/out/
+.expo/
+dist/
+.bundle/
+
+# Android build outputs & binaries
+.gradle/
+**/.gradle/
+build/
+**/build/
+android/app/build-tools/
+android/local.properties
+android/local (1).properties
+android/local (2).properties
+*.keystore
+!android/app/debug.keystore
+
+# Built binaries & huge packages (CRITICAL: GitHub blocks >100MB)
+*.apk
+*.aab
+*.idsig
+*.old_backup
+*.ipa
+*.zip
+*.tar.gz
+*.pdf
+release_builds/
+backups/
+
+# iOS build outputs
+ios/build/
+ios/Pods/
+ios/*.xcworkspace
+ios/*.xcuserdata
+
+# macOS & Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.log
+*.tsbuildinfo
+
+# Duplicate numbered files from previous copies
+* (1).*
+* (2).*
+* (1)
+* (2)

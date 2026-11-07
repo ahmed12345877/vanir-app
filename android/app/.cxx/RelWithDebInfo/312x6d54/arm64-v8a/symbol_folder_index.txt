@@ -1,0 +1,1 @@
+/Users/roshdi/Desktop/app/android/app/build/intermediates/cxx/RelWithDebInfo/312x6d54/obj/arm64-v8a

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Aw-Aruba--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    AW Aruba Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#5ba3da" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#ff0000" fill-rule="evenodd" stroke="#f7fcff" stroke-width=".35" d="m5.773 11.96-4.38-.925 4.434-.877 1.283-4.59 1.012 4.552 3.96.92-3.914.92-1.129 3.743-1.266-3.743Z" clip-rule="evenodd"></path>
+    <path fill="#fad615" fill-rule="evenodd" d="M32 18H0v2h32v-2Zm0 4H0v2h32v-2Z" clip-rule="evenodd"></path>
+  </g>
+</svg>

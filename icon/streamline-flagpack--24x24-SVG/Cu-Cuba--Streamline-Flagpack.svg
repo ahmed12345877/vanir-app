@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Cu-Cuba--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    CU Cuba Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#3d58db" fill-rule="evenodd" d="M3.456 6.592v18.816h25.088V6.592H3.456Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M3.456 6.592v18.816h25.088V6.592H3.456Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#3d58db" stroke="#f7fcff" stroke-width="4" d="M3.456 12.864H1.888v6.272h28.224v-6.272H3.456Z"></path>
+  </g>
+  <path fill="#e31d1c" fill-rule="evenodd" d="M3.456 6.592v18.816L17.568 16 3.456 6.592Z" clip-rule="evenodd"></path>
+  <mask id="b" width="18" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M3.456 6.592v18.816L17.568 16 3.456 6.592Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#b)">
+    <path fill="#f7fcff" fill-rule="evenodd" d="m8.6994 17.7381-2.8789 1.5194 1.4018-3.0529-1.7859-1.6307 2.2046-.0815 1.0584-2.7597.8075 2.7597h2.2015l-1.4677 1.7122 1.1674 3.0529-2.7087-1.5194Z" clip-rule="evenodd"></path>
+  </g>
+</svg>

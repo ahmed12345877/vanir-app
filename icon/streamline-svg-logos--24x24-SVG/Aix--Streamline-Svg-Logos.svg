@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 96 96" id="Aix--Streamline-Svg-Logos" height="24" width="24">
+  <desc>
+    Aix Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="url(#a)" d="m27.1003 66.9262-2.6797-9.0016H11.9319l-2.67973 9.0016H1l12.3278-37.8447h10.0745l12.1668 37.8447h-8.4688Zm-8.8441-30.3641h-.268l-4.1274 14.3705h8.574l-4.1786-14.3705Z"></path>
+  <path fill="url(#b)" d="M39.3218 66.9262v-6.5614h4.8231V35.6346h-4.8231v-6.5614h17.7919v6.5614h-4.8231v24.7302h4.8231v6.5614H39.3218Z"></path>
+  <path fill="url(#c)" d="M95.0007 66.9262h-9.4334l-8.094-13.9371h-.1607l-7.8785 13.9371h-8.7896l12.0059-19.5766-11.4166-18.2764h9.4852l7.2892 12.7971h.1608l7.3956-12.7971h8.7895l-11.523 18.4393 12.1696 19.4137Z"></path>
+  <defs>
+    <linearGradient id="a" x1="201.737" x2="9705.68" y1="3862.42" y2="433.181" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6fdc8c"></stop>
+      <stop offset=".305" stop-color="#6fdc8c"></stop>
+      <stop offset=".928" stop-color="#009d9a"></stop>
+      <stop offset="1" stop-color="#009d9a"></stop>
+    </linearGradient>
+    <linearGradient id="b" x1="-136.889" x2="3322.68" y1="3863.24" y2="2614.95" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6fdc8c"></stop>
+      <stop offset=".305" stop-color="#6fdc8c"></stop>
+      <stop offset=".928" stop-color="#009d9a"></stop>
+      <stop offset="1" stop-color="#009d9a"></stop>
+    </linearGradient>
+    <linearGradient id="c" x1="-4634.4" x2="4765.03" y1="3863.24" y2="471.716" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6fdc8c"></stop>
+      <stop offset=".305" stop-color="#6fdc8c"></stop>
+      <stop offset=".928" stop-color="#009d9a"></stop>
+      <stop offset="1" stop-color="#009d9a"></stop>
+    </linearGradient>
+  </defs>
+</svg>

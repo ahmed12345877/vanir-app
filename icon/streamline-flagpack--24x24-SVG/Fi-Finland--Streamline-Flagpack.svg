@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Fi-Finland--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    FI Finland Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#f7fcff" fill-rule="evenodd" d="M2.0622 4.6756v20.9066h27.8756V4.6756H2.0622Z" clip-rule="evenodd"></path>
+  <mask id="a" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#ffffff" fill-rule="evenodd" d="M2.0622 4.6756v20.9066h27.8756V4.6756H2.0622Z" clip-rule="evenodd"></path>
+  </mask>
+  <g mask="url(#a)">
+    <path fill="#2e42a5" stroke="#2e42a5" stroke-width="2" d="M11.4868 5.5467h-.8711v8.1213H1.1911v3.4845h9.4246v9.3008h3.4844v-9.3008h16.7088V13.668H14.1001V5.5467h-2.6133Z"></path>
+  </g>
+</svg>

@@ -1,0 +1,44 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "hosting": {
+    "public": "admin/out",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/hotels/**",
+        "destination": "/hotels/edit.html"
+      },
+      {
+        "source": "/jets/**",
+        "destination": "/jets/edit.html"
+      },
+      {
+        "source": "/yachts/**",
+        "destination": "/yachts/edit.html"
+      },
+      {
+        "source": "/transfers/**",
+        "destination": "/transfers/edit.html"
+      },
+      {
+        "source": "/services/packages/**",
+        "destination": "/services/packages/edit.html"
+      }
+    ]
+  }
+}

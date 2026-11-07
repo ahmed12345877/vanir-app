@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1001729880037",
+    "project_id": "gen-lang-client-0364375301",
+    "storage_bucket": "gen-lang-client-0364375301.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001729880037:android:da145ec4fb1c7f7247090c",
+        "android_client_info": {
+          "package_name": "com.vanir.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001729880037-0ij4rtsejunjuq9nn3oo6tb9t7bcslgc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vanir.mobile",
+            "certificate_hash": "ede07abad2f723039e0a4074fe41782a7ef1dfb6"
+          }
+        },
+        {
+          "client_id": "1001729880037-npfs9vmk7vfiqickndvjcr38cirecnpd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAs_cjDh0Dr8j33qe_wEdrymmdwIKPssMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001729880037-9cuaiu287imvbp33jquv93dbv450nmud.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1001729880037-3cvg7fm191u9hrpmtqg1r22ch1h3tme2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vanir.mobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

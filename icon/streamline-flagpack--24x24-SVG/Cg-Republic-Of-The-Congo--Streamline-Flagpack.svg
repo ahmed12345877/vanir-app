@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" id="Cg-Republic-Of-The-Congo--Streamline-Flagpack" height="24" width="24">
+  <desc>
+    CG Republic Of The Congo Streamline Icon: https://streamlinehq.com
+  </desc>
+  <g clip-path="url(#a)">
+    <path fill="#FA1111" fill-rule="evenodd" d="M32 4v24H0L32 4Z" clip-rule="evenodd"></path>
+    <path fill="#07A907" fill-rule="evenodd" d="M0 28V4h32L0 28Z" clip-rule="evenodd"></path>
+    <mask id="b" width="32" height="24" x="0" y="4" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+      <path fill="#e31d1c" fill-rule="evenodd" d="M0 4v24h32V4H0Z" clip-rule="evenodd"></path>
+    </mask>
+    <g mask="url(#b)">
+      <path fill="#fbcd17" fill-rule="evenodd" d="M29.492-1.8-1 27.576l6.052 3.012 29.589-26.8L29.49-1.8Z" clip-rule="evenodd"></path>
+    </g>
+  </g>
+  <defs>
+    <clipPath id="a">
+      <path fill="#ffffff" d="M0 0h32v32H0z"></path>
+    </clipPath>
+  </defs>
+</svg>
