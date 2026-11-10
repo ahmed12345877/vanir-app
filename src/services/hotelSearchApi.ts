@@ -4,6 +4,7 @@ import { CURATED_LUXURY_HOTELS } from './catalogApi';
 import { isRapidApiActive, isAmadeusActive } from '../config/travelApiConfig';
 import { searchRapidApiHotels } from './rapidApiBookingService';
 import { searchAmadeusHotels } from './amadeusTravelService';
+import { resolveAuthenticHotelBank } from './authenticHotelPhotoBanks';
 
 export interface HotelSearchParams {
   destination: string;
@@ -472,12 +473,12 @@ export function generateClientSideLiveHotels(params: HotelSearchParams, nights: 
   const rawProperties = CURATED_LUXURY_HOTELS.map(hotel => {
     const rawPrice = parseInt(hotel.price.replace(/[^\d]/g, ''), 10) || 850;
     const city = hotel.tag1 ? hotel.tag1.split(',')[0].replace(/[^a-zA-Z\s]/g, '').trim() : (hotel.country || 'International');
-    const hotelImages = (hotel.images && hotel.images.length >= 4) ? hotel.images : [
-      hotel.image,
-      'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1000&q=80',
-      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1000&q=80',
-      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1000&q=80',
-    ];
+    const fallbackBank = resolveAuthenticHotelBank(hotel.id, hotel.name);
+    const hotelImages = (hotel.images && hotel.images.length >= 4)
+      ? hotel.images
+      : fallbackBank.length > 0
+      ? fallbackBank.slice(0, 8)
+      : [hotel.image];
 
     const chain = resolveHotelChain(hotel.name);
 

@@ -110,6 +110,12 @@ export function HotelBookingScreen() {
   const [isLoadingLive, setIsLoadingLive] = useState(false);
   const [liveResponse, setLiveResponse] = useState<HotelSearchResponse | null>(null);
   const [liveProperties, setLiveProperties] = useState<LiveHotelProperty[]>([]);
+  const PAGE_SIZE = 6;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const visibleProperties = useMemo(
+    () => liveProperties.slice(0, visibleCount),
+    [liveProperties, visibleCount]
+  );
 
   // 6. Room Details VIP Drawer State
   const [isRoomDrawerOpen, setIsRoomDrawerOpen] = useState(false);
@@ -126,7 +132,9 @@ export function HotelBookingScreen() {
   }, [checkInDate, checkOutDate]);
 
   // Execute Live API Fetch
+  const searchSeqRef = useRef(0);
   const executeLiveSearch = useCallback(async () => {
+    const seq = ++searchSeqRef.current;
     setIsLoadingLive(true);
     try {
       const result = await searchLiveHotels({
@@ -138,13 +146,15 @@ export function HotelBookingScreen() {
         rooms,
         propertyType: selectedType,
       });
+      if (seq !== searchSeqRef.current) return;
 
       setLiveResponse(result);
+      setVisibleCount(PAGE_SIZE);
       setLiveProperties(result.properties || []);
     } catch (err) {
       console.warn('[HotelEngine] Error fetching live hotels:', err);
     } finally {
-      setIsLoadingLive(false);
+      if (seq === searchSeqRef.current) setIsLoadingLive(false);
     }
   }, [selectedDestination, checkInDate, checkOutDate, adults, children, rooms, selectedType]);
 
@@ -210,7 +220,6 @@ export function HotelBookingScreen() {
       }
       setCheckOutDate(isoString);
       setShowCalendarModal(false);
-      executeLiveSearch();
     }
   };
 
@@ -228,7 +237,6 @@ export function HotelBookingScreen() {
     const d2 = String(out.getDate()).padStart(2, '0');
     setCheckOutDate(`${y2}-${m2}-${d2}`);
     setShowCalendarModal(false);
-    executeLiveSearch();
   };
 
   // Open Room Drawer
@@ -348,6 +356,14 @@ export function HotelBookingScreen() {
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={200}
+        removeClippedSubviews
+        onScroll={e => {
+          const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
+          if (contentOffset.y + layoutMeasurement.height > contentSize.height - 900) {
+            setVisibleCount(c => (c < liveProperties.length ? c + PAGE_SIZE : c));
+          }
+        }}
         contentContainerStyle={[styles.scroll, { paddingBottom: 60 + insets.bottom }]}
       >
         {/* Real-Time Live API Status Banner */}
@@ -369,7 +385,6 @@ export function HotelBookingScreen() {
                   style={[styles.typeButton, isActive && styles.activeTypeButton]}
                   onPress={() => {
                     setSelectedType(type);
-                    executeLiveSearch();
                   }}
                 >
                   <Text style={[styles.typeButtonText, isActive && styles.activeTypeButtonText]}>
@@ -420,7 +435,6 @@ export function HotelBookingScreen() {
                     style={[styles.quickDestChip, isSelected && styles.quickDestChipActive]}
                     onPress={() => {
                       setSelectedDestination(opt);
-                      executeLiveSearch();
                     }}
                   >
                     <Flag emoji={opt.flag} size={18} />
@@ -547,7 +561,7 @@ export function HotelBookingScreen() {
 
           {/* Hotel Cards List */}
           <View style={styles.hotelCardsList}>
-            {liveProperties.map(hotel => {
+            {visibleProperties.map(hotel => {
               const topRoom = hotel.rooms[0];
               const { amount, period } = formatWesternPrice(
                 `$${hotel.lowestPricePerNight}`,
@@ -640,7 +654,7 @@ export function HotelBookingScreen() {
 
                           <View style={styles.bookDrawerBtn}>
                             <Text style={styles.bookDrawerBtnText}>Reserve</Text>
-                            <ArrowRight color="#1C1917" size={13} strokeWidth={2.6} />
+                            <ArrowRight color="#FFFFFF" size={13} strokeWidth={2.6} />
                           </View>
                         </View>
                       </View>
@@ -694,7 +708,6 @@ export function HotelBookingScreen() {
                       setSelectedDestination(item);
                       setShowDestModal(false);
                       setDestSearchQuery('');
-                      executeLiveSearch();
                     }}
                   >
                     <Flag emoji={item.flag} size={28} />
@@ -830,7 +843,6 @@ export function HotelBookingScreen() {
               style={styles.modalDoneBtn}
               onPress={() => {
                 setShowCalendarModal(false);
-                executeLiveSearch();
               }}
             >
               <Text style={styles.modalDoneBtnText}>Confirm Dates ({nightsCount} Nights)</Text>
@@ -946,7 +958,6 @@ export function HotelBookingScreen() {
               style={styles.modalDoneBtn}
               onPress={() => {
                 setShowGuestsModal(false);
-                executeLiveSearch();
               }}
             >
               <Text style={styles.modalDoneBtnText}>
@@ -1517,20 +1528,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: '#D4AF37',
+    backgroundColor: '#0A0A0A',
+    borderWidth: 1.5,
+    borderColor: '#D4AF37',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 12,
     shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.35,
     shadowRadius: 4,
     elevation: 3,
   },
   bookDrawerBtnText: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#1C1917',
+    color: '#FFFFFF',
   },
   // Modal Common Styles (Off-White & Navy)
   modalBackdrop: {

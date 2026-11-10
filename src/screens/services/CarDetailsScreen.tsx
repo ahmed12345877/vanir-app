@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   View,
+  Share,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
@@ -32,9 +33,14 @@ import {
   Radio,
   Zap,
   Calendar,
+  Share2,
+  Image as ImageIcon,
 } from 'lucide-react-native';
 import { useCatalogStore } from '../../context/CatalogStore';
 import { VipDatePickerModal } from '../../components/VipDatePickerModal';
+import { AnimatedGoldButton } from '../../components/AnimatedGoldButton';
+import { getCarGallery } from '../../services/carGalleryBank';
+import { CarPhotoGalleryModal } from '../../components/CarPhotoGalleryModal';
 import type { RootStackParamList } from '../../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -52,12 +58,6 @@ const PHOTO_LABELS = [
   'Chauffeur Cockpit & Luggage Bay',
 ];
 
-const DEFAULT_FALLBACK_PHOTOS = [
-  'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=1200&q=85',
-  'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=1200&q=85',
-  'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=1200&q=85',
-  'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=85',
-];
 
 const CAR_AMENITIES = [
   { id: '1', label: 'Uniformed Private Chauffeur', icon: Users, color: '#D4AF37', bg: 'rgba(212, 175, 55, 0.15)' },
@@ -102,6 +102,7 @@ export function CarDetailsScreen() {
   const insets = useSafeAreaInsets();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState('p1');
   const [serviceDate, setServiceDate] = useState(() => getFutureYmd(2));
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -162,12 +163,27 @@ export function CarDetailsScreen() {
       return route.params.images;
     }
     if (route.params?.image) {
-      return [route.params.image, ...DEFAULT_FALLBACK_PHOTOS.slice(1, 4)];
+      return [route.params.image];
     }
-    return DEFAULT_FALLBACK_PHOTOS;
+    return [];
   }, [liveDoc, foundCar, route.params?.images, route.params?.image]);
 
-  const activePhoto = photosList[selectedPhotoIndex] ?? photosList[0];
+  // Comprehensive 30+ to 45+ Categorized Photo Bank
+  const carGallery = useMemo(() => {
+    const carIdentifier = route.params?.carId || foundCar?.id || carName;
+    return getCarGallery(carIdentifier, carName, photosList);
+  }, [route.params?.carId, foundCar?.id, carName, photosList]);
+
+  const activePhoto = carGallery.all[selectedPhotoIndex]?.url ?? photosList[selectedPhotoIndex] ?? photosList[0];
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        title: carName,
+        message: `${carName} — Luxury VIP Chauffeur Service on Vanir Private Portal: ${carPrice}`,
+      });
+    } catch {}
+  };
 
   const descriptionText = useMemo(() => {
     if (liveDoc?.description && liveDoc.description.length > 20) {
@@ -218,6 +234,7 @@ export function CarDetailsScreen() {
                 pressed && styles.topBtnPressed,
               ]}
               onPress={() => navigation.goBack()}
+              accessibilityLabel="Go back"
             >
               <ChevronLeft color="#1C1917" size={22} strokeWidth={2.5} />
             </Pressable>
@@ -233,25 +250,36 @@ export function CarDetailsScreen() {
               </View>
             </View>
 
-            <Pressable
-              style={styles.circleBtn}
-              onPress={() => setIsFavorite(prev => !prev)}
-            >
-              <Heart
-                color="#EF4444"
-                fill={isFavorite ? '#EF4444' : 'transparent'}
-                size={20}
-                strokeWidth={2}
-              />
-            </Pressable>
+            <View style={styles.topRightActions}>
+              <Pressable
+                style={styles.circleBtn}
+                onPress={handleShare}
+                accessibilityLabel="Share vehicle"
+              >
+                <Share2 color="#1C1917" size={19} strokeWidth={2.2} />
+              </Pressable>
+
+              <Pressable
+                style={styles.circleBtn}
+                onPress={() => setIsFavorite(prev => !prev)}
+                accessibilityLabel="Favorite"
+              >
+                <Heart
+                  color="#EF4444"
+                  fill={isFavorite ? '#EF4444' : 'transparent'}
+                  size={20}
+                  strokeWidth={2}
+                />
+              </Pressable>
+            </View>
           </View>
 
-          {/* Floating Left and Right Navigation Arrows */}
-          {photosList.length > 1 && (
+          {/* Floating Left and Right Navigation Chevrons */}
+          {carGallery.all.length > 1 && (
             <>
               <Pressable
                 style={styles.heroArrowLeft}
-                onPress={() => setSelectedPhotoIndex(prev => (prev === 0 ? photosList.length - 1 : prev - 1))}
+                onPress={() => setSelectedPhotoIndex(prev => (prev === 0 ? carGallery.all.length - 1 : prev - 1))}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                 accessibilityLabel="Previous Vehicle Photo"
               >
@@ -260,7 +288,7 @@ export function CarDetailsScreen() {
 
               <Pressable
                 style={styles.heroArrowRight}
-                onPress={() => setSelectedPhotoIndex(prev => (prev + 1) % photosList.length)}
+                onPress={() => setSelectedPhotoIndex(prev => (prev + 1) % carGallery.all.length)}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                 accessibilityLabel="Next Vehicle Photo"
               >
@@ -269,37 +297,22 @@ export function CarDetailsScreen() {
             </>
           )}
 
-          {/* Tap to view / Active photo label badge (Clean, zero numbers over photo) */}
-          <Pressable
-            style={styles.tapBadge}
-            onPress={() => setSelectedPhotoIndex(prev => (prev + 1) % photosList.length)}
-          >
-            <Eye color="#FFFFFF" size={14} strokeWidth={2} />
-            <Text style={styles.tapBadgeText}>
-              {PHOTO_LABELS[selectedPhotoIndex] ?? 'VIP Fleet Showcase'}
+          {/* Floating Photo Counter Badge bottom-left (Matches Hotel Experience "1/38") */}
+          <View style={styles.floatingCounterBadge}>
+            <Text style={styles.floatingCounterText}>
+              {selectedPhotoIndex + 1}/{carGallery.totalCount}
             </Text>
-          </Pressable>
-
-          {/* Authentic Photo Thumbnails Row */}
-          <View style={styles.thumbnailsRow}>
-            {photosList.map((photoUrl, idx) => {
-              const isSelected = selectedPhotoIndex === idx;
-              return (
-                <Pressable
-                  key={idx}
-                  onPress={() => setSelectedPhotoIndex(idx)}
-                  style={[styles.thumbnail, isSelected && styles.thumbnailActive]}
-                >
-                  <Image source={{ uri: photoUrl }} style={styles.thumbnailImg} resizeMode="cover" />
-                  {isSelected && (
-                    <View style={styles.activeCheck}>
-                      <Check color="#FFFFFF" size={10} strokeWidth={3} />
-                    </View>
-                  )}
-                </Pressable>
-              );
-            })}
           </View>
+
+          {/* Floating "View photos" pill button bottom-right */}
+          <Pressable
+            style={styles.viewPhotosPill}
+            onPress={() => setIsGalleryOpen(true)}
+            accessibilityLabel="View All Vehicle Photos"
+          >
+            <Text style={styles.viewPhotosPillText}>View photos</Text>
+            <ImageIcon color="#1C1917" size={16} strokeWidth={2.2} />
+          </Pressable>
         </View>
 
         {/* Content Sheet */}
@@ -508,19 +521,13 @@ export function CarDetailsScreen() {
         </View>
       </ScrollView>
 
-      {/* Sticky Bottom Bar */}
-      <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-        <View style={styles.bottomPriceCol}>
-          <Text style={styles.bottomPriceLabel}>Chauffeur Rate</Text>
-          <Text style={styles.bottomPriceValue}>
-            {CHAUFFEUR_PACKAGES.find(p => p.id === selectedPackage)?.price ?? carPrice}
-          </Text>
-        </View>
-
-        <Pressable style={styles.reserveBtn} onPress={handleBookNow}>
-          <Car color="#1C1917" size={18} strokeWidth={2.5} />
-          <Text style={styles.reserveBtnText}>Reserve Chauffeur</Text>
-        </Pressable>
+      {/* Sticky Bottom Actions (Luxury Black & Animated Gold Border) */}
+      <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+        <AnimatedGoldButton
+          title={`${CHAUFFEUR_PACKAGES.find(p => p.id === selectedPackage)?.price ?? carPrice} — Reserve Chauffeur`}
+          onPress={handleBookNow}
+          accessibilityLabel="Reserve Chauffeur"
+        />
       </View>
 
       <VipDatePickerModal
@@ -529,6 +536,14 @@ export function CarDetailsScreen() {
         title="Select Chauffeur Service Date"
         onClose={() => setShowDatePicker(false)}
         onSelectDate={setServiceDate}
+      />
+
+      {/* Full-Screen Categorized 30+ to 45+ Car Photo Gallery Modal */}
+      <CarPhotoGalleryModal
+        visible={isGalleryOpen}
+        gallery={carGallery}
+        initialIndex={selectedPhotoIndex}
+        onClose={() => setIsGalleryOpen(false)}
       />
     </View>
   );
@@ -593,24 +608,47 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.5,
   },
-  tapBadge: {
-    position: 'absolute',
-    bottom: 74,
-    left: 20,
+  topRightActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(28, 25, 23, 0.85)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.3)',
+    gap: 8,
   },
-  tapBadgeText: {
+  floatingCounterBadge: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    backgroundColor: 'rgba(28, 25, 23, 0.75)',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  floatingCounterText: {
     color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 12.5,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  viewPhotosPill: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  viewPhotosPillText: {
+    color: '#1C1917',
+    fontSize: 13,
+    fontWeight: '700',
   },
   heroArrowLeft: {
     position: 'absolute',
@@ -922,14 +960,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: 'rgba(212, 175, 55, 0.25)',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingTop: 12,
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     shadowColor: '#1C1917',
     shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 8,
   },

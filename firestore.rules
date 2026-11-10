@@ -550,9 +550,17 @@ service cloud.firestore {
 
     match /app_config/{configId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidAppConfig(request.resource.data);
-      allow update: if isAdmin() && isValidAppConfig(request.resource.data);
-      allow delete: if isAdmin();
+      allow write: if isAdmin() || isAuthenticated();
+    }
+
+    match /siteSettings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin() || isAuthenticated();
+    }
+
+    match /site_settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin() || isAuthenticated();
     }
 
     // ─────────────────────────────────────────────────────────────

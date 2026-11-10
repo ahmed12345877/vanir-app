@@ -264,14 +264,16 @@ export function BookingScreen() {
       : bookingType === 'esim'
       ? 24
       : bookingType.includes('limo') || bookingType.includes('car')
-      ? 180
+      ? 350
       : bookingType.includes('yacht')
-      ? 2400
+      ? 950
       : bookingType.includes('jet')
-      ? 14500
+      ? 5800
+      : bookingType.includes('hotel') || bookingType.includes('apartment')
+      ? 450
       : bookingType.includes('airport')
       ? 150
-      : 450;
+      : 850;
 
   const addonTotal = (addTarmac ? 250 : 0) + (addButler ? 300 : 0);
   const subtotal = basePrice + addonTotal;

@@ -1,5 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import { CURATED_LUXURY_HOTELS } from './catalogApi';
+import { isUnsplashOrGeneric, sanitizePhotoList } from './urlSanitizer';
+import { resolveAuthenticHotelBank } from './authenticHotelPhotoBanks';
 
 export interface FlightData {
   id?: string;
@@ -895,30 +897,45 @@ export const CACHE_HOTELS_KEY = '@vanir_cached_hotels';
 export function mapFirestoreDocToHotel(doc: any): LiveHotelCatalogItem {
   const d = typeof doc.data === 'function' ? doc.data() : doc;
   const docId = doc.id || d.id || '';
-  const imagesList: string[] = Array.isArray(d.images)
+  const hotelName = d.propertyName || d.name || 'Luxury Hotel';
+  const bankPhotos = resolveAuthenticHotelBank(docId, hotelName);
+
+  const rawImages: string[] = Array.isArray(d.images)
     ? d.images.map((img: any) => (typeof img === 'string' ? img : img?.url || '')).filter(Boolean)
     : [];
+  const cleanImages = sanitizePhotoList(rawImages);
+
+  const curatedMatch = CURATED_LUXURY_HOTELS.find(h => h.id === docId);
+
+  const finalImages: string[] =
+    cleanImages.length > 0
+      ? cleanImages
+      : bankPhotos.length > 0
+      ? bankPhotos
+      : curatedMatch?.images && curatedMatch.images.length > 0
+      ? curatedMatch.images
+      : ['https://cf.bstatic.com/xdata/images/hotel/max1280x900/557691306.jpg?k=5a2974dae34fa907e3b9229079c9983c3409a32e35b5ca18a1786a1107646ffa'];
+
   const primaryImage =
-    imagesList[0] ||
-    d.image ||
-    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1000&q=80';
+    (!isUnsplashOrGeneric(d.image) ? d.image : null) ||
+    finalImages[0];
 
   return {
     id: docId,
-    name: d.propertyName || d.name || 'Luxury Hotel',
-    subtitle: d.cityDestination || d.subtitle || '',
+    name: hotelName,
+    subtitle: d.cityDestination || d.subtitle || curatedMatch?.subtitle || '',
     image: primaryImage,
-    images: imagesList.length > 0 ? imagesList : [primaryImage],
-    tag1: d.suiteType || d.tag1 || (d.cityDestination ? d.cityDestination.split(',')[0].trim() : 'Vanir Luxury'),
+    images: finalImages,
+    tag1: d.suiteType || d.tag1 || curatedMatch?.tag1 || (d.cityDestination ? d.cityDestination.split(',')[0].trim() : 'Vanir Luxury'),
     tag2: d.viewType
       ? `${d.viewType.charAt(0).toUpperCase() + d.viewType.slice(1)} View`
-      : (d.tag2 || 'VIP Suite'),
-    price: typeof d.nightlyRate === 'number' ? `$${d.nightlyRate}` : (d.price || '$850'),
-    pricePer: d.pricePer || 'per night',
-    badge: d.badge || (d.butlerService ? 'Butler Service' : 'Curated'),
-    country: d.country || (d.cityDestination && d.cityDestination.includes(',') ? d.cityDestination.split(',')[1].trim() : d.cityDestination || ''),
-    description: d.description || '',
-    rating: typeof d.rating === 'number' ? d.rating : 4.96,
+      : (d.tag2 || curatedMatch?.tag2 || 'VIP Suite'),
+    price: typeof d.nightlyRate === 'number' ? `$${d.nightlyRate}` : (d.price || curatedMatch?.price || '$850'),
+    pricePer: d.pricePer || curatedMatch?.pricePer || 'per night',
+    badge: d.badge || (d.butlerService ? 'Butler Service' : (curatedMatch?.badge || 'Curated')),
+    country: d.country || curatedMatch?.country || (d.cityDestination && d.cityDestination.includes(',') ? d.cityDestination.split(',')[1].trim() : d.cityDestination || ''),
+    description: d.description || curatedMatch?.description || '',
+    rating: typeof d.rating === 'number' ? d.rating : (curatedMatch?.rating || 4.96),
   };
 }
 
@@ -943,6 +960,12 @@ function buildMergedHotelsList(firestoreDocs: any[] = []): LiveHotelCatalogItem[
   }
   for (const doc of firestoreDocs) {
     const item = mapFirestoreDocToHotel(doc);
+    const existing = map.get(item.id);
+    // If incoming item has no authentic photos, protect existing curated photos
+    if (existing && (!item.images || item.images.length === 0 || isUnsplashOrGeneric(item.image))) {
+      item.image = existing.image;
+      item.images = existing.images;
+    }
     map.set(item.id, item);
   }
   return Array.from(map.values());

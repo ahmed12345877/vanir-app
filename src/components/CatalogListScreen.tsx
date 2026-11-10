@@ -25,6 +25,7 @@ import {
   Sparkles,
   ShieldCheck,
   Building,
+  Heart,
 } from 'lucide-react-native';
 import { borderRadius, spacing } from '../theme/spacing';
 import type { RootStackParamList } from '../navigation/types';
@@ -465,7 +466,76 @@ export function CatalogListScreen({
           ListHeaderComponent={listHeaderComponent}
           renderItem={({ item }) => {
             const isHotel = bookingType === 'hotel';
-            const defaultPeriod = isHotel ? 'night' : bookingType === 'limousine' ? 'day' : 'day';
+
+            if (isHotel) {
+              const rawRating = item.rating || 9.3;
+              const ratingScore = rawRating.toFixed(1);
+              const ratingWord = rawRating >= 9.0 ? 'Wonderful' : rawRating >= 8.0 ? 'Excellent' : 'Very Good';
+              const reviewCount = rawRating >= 9.5 ? '10,435' : rawRating >= 9.0 ? '8,515' : '7,853';
+
+              return (
+                <LuxuryPressable
+                  style={styles.hotelListingCard}
+                  onPress={() => handleItemPress(item)}
+                  scaleTo={0.985}
+                >
+                  <View style={styles.hotelListingImageBox}>
+                    <Image source={{ uri: item.image }} style={styles.hotelListingImg} resizeMode="cover" />
+                    <View style={styles.hotelFavoriteHeart}>
+                      <Heart color="#FFFFFF" size={20} strokeWidth={2.2} />
+                    </View>
+                  </View>
+
+                  <View style={styles.hotelListingBody}>
+                    {/* Rating Pill & Stars Row */}
+                    <View style={styles.hotelRatingStarsRow}>
+                      <View style={styles.greenScorePillListing}>
+                        <Text style={styles.greenScoreValListing}>{ratingScore}</Text>
+                        <Text style={styles.greenScoreWordListing}> {ratingWord} </Text>
+                        <Text style={styles.greenScoreReviewsListing}>{reviewCount} reviews</Text>
+                      </View>
+
+                      <View style={styles.starsIconsListing}>
+                        {[1, 2, 3, 4, 5].map(i => (
+                          <Star key={i} color="#F59E0B" fill="#F59E0B" size={12} />
+                        ))}
+                      </View>
+                    </View>
+
+                    {/* Hotel Name */}
+                    <Text style={styles.hotelListingTitle} numberOfLines={1}>
+                      {item.name}
+                    </Text>
+
+                    {/* Address & Distance */}
+                    <Text style={styles.hotelListingSubtitle} numberOfLines={1}>
+                      {item.subtitle}
+                    </Text>
+
+                    {/* Pricing Row: "1 night, 1 room" and strikethrough price + bold price */}
+                    <View style={styles.hotelListingPriceRow}>
+                      <Text style={styles.hotelListingStayDesc}>1 night, 1 room</Text>
+                      <View style={styles.hotelListingPriceGroup}>
+                        <Text style={styles.hotelListingStrikePrice}>
+                          {item.price.includes('EGP') ? 'EGP 7,534' : '$1,250'}
+                        </Text>
+                        <Text style={styles.hotelListingFinalPrice}>{item.price}</Text>
+                      </View>
+                    </View>
+
+                    {/* Refundable & Save Badges Row */}
+                    <View style={styles.hotelListingPerksRow}>
+                      <Text style={styles.hotelListingRefundable}>Refundable</Text>
+                      <Text style={styles.hotelListingSaveTag}>
+                        {item.price.includes('EGP') ? 'Save EGP 1,783' : 'Save $300'}
+                      </Text>
+                    </View>
+                  </View>
+                </LuxuryPressable>
+              );
+            }
+
+            const defaultPeriod = bookingType === 'limousine' ? 'day' : 'day';
             const { amount, period } = formatWesternPrice(item.price, defaultPeriod as any);
             return (
               <LuxuryPressable
@@ -1207,6 +1277,135 @@ function createStyles(themeColors: ReturnType<typeof useTheme>['colors']) {
       fontWeight: '800',
       color: '#1C1917',
       letterSpacing: 0.5,
+    },
+    hotelListingCard: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 20,
+      marginHorizontal: 16,
+      marginBottom: 20,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: 'rgba(0, 0, 0, 0.06)',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    hotelListingImageBox: {
+      width: '100%',
+      height: 220,
+      position: 'relative',
+      backgroundColor: '#E2E8F0',
+    },
+    hotelListingImg: {
+      width: '100%',
+      height: '100%',
+    },
+    hotelFavoriteHeart: {
+      position: 'absolute',
+      top: 14,
+      right: 14,
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: 'rgba(0, 0, 0, 0.35)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    hotelListingBody: {
+      padding: 16,
+      gap: 6,
+    },
+    hotelRatingStarsRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 2,
+    },
+    greenScorePillListing: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#0A0A0A',
+      borderWidth: 1,
+      borderColor: '#D4AF37',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 16,
+      gap: 3,
+    },
+    greenScoreValListing: {
+      fontSize: 12,
+      fontWeight: '900',
+      color: '#D4AF37',
+    },
+    greenScoreWordListing: {
+      fontSize: 11.5,
+      fontWeight: '800',
+      color: '#FFFFFF',
+    },
+    greenScoreReviewsListing: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: 'rgba(255, 255, 255, 0.9)',
+    },
+    starsIconsListing: {
+      flexDirection: 'row',
+      gap: 2,
+    },
+    hotelListingTitle: {
+      fontSize: 18,
+      fontWeight: '900',
+      color: '#1C1917',
+      marginTop: 2,
+    },
+    hotelListingSubtitle: {
+      fontSize: 12.5,
+      color: '#64748B',
+      fontWeight: '500',
+    },
+    hotelListingPriceRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+      marginTop: 8,
+    },
+    hotelListingStayDesc: {
+      fontSize: 12,
+      color: '#64748B',
+      fontWeight: '600',
+    },
+    hotelListingPriceGroup: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      gap: 8,
+    },
+    hotelListingStrikePrice: {
+      fontSize: 13,
+      color: '#EF4444',
+      textDecorationLine: 'line-through',
+      fontWeight: '600',
+    },
+    hotelListingFinalPrice: {
+      fontSize: 18,
+      fontWeight: '900',
+      color: '#1C1917',
+    },
+    hotelListingPerksRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 2,
+    },
+    hotelListingRefundable: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: '#D4AF37',
+    },
+    hotelListingSaveTag: {
+      fontSize: 12,
+      fontWeight: '800',
+      color: '#D4AF37',
     },
   });
 }

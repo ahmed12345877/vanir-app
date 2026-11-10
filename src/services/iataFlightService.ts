@@ -910,11 +910,11 @@ export async function searchIataLiveFlights(params: {
   const travelClass = params.travelClass || 'First';
   const multiplier =
     travelClass === 'VIP Jet'
-      ? 5.8
+      ? 18.0
       : travelClass === 'First'
-      ? 3.2
+      ? 6.8
       : travelClass === 'Business'
-      ? 1.8
+      ? 3.4
       : 1.0;
 
   const results: IataFlightSchedule[] = assignedAirlineCodes.map((code, index) => {
@@ -937,8 +937,10 @@ export async function searchIataLiveFlights(params: {
     const arrM = (arrTotalMins % 60).toString().padStart(2, '0');
     const arrivalTime = `${arrH}:${arrM}`;
 
-    const basePrice = Math.round((280 + (km * 0.14)) * multiplier);
-    const taxes = Math.round(basePrice * 0.11);
+    // Realistic baseline: ~180 base + distance factor, with realistic class scaling
+    const economyDistanceFare = Math.round(180 + (km * 0.055));
+    const basePrice = Math.round(economyDistanceFare * multiplier);
+    const taxes = Math.round(basePrice * 0.08);
     const totalPrice = basePrice + taxes;
 
     const aircraft = isVanir

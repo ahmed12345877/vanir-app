@@ -208,10 +208,19 @@ const DESTINATIONS: DestinationFilter[] = [
         t.includes('madinah') ||
         t.includes('dubai') ||
         t.includes('abu dhabi') ||
+        t.includes('uae') ||
         t.includes('qatar') ||
         t.includes('doha') ||
         t.includes('egypt') ||
-        t.includes('cairo')
+        t.includes('cairo') ||
+        t.includes('sharm') ||
+        t.includes('hurghada') ||
+        t.includes('sunrise') ||
+        t.includes('movenpick') ||
+        t.includes('radisson') ||
+        t.includes('morocco') ||
+        t.includes('marrakech') ||
+        t.includes('mansour')
       );
     },
   },

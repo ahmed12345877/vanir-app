@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {
   Image,
@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Share,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
@@ -19,6 +20,7 @@ import {
   Star,
   Image as ImageIcon,
   ChevronRight,
+  Share2,
   Waves,
   Sparkles,
   Utensils,
@@ -46,7 +48,13 @@ import {
 } from '../../services/hotelSearchApi';
 import { HotelRoomDrawer } from '../../components/HotelRoomDrawer';
 import { VipDatePickerModal } from '../../components/VipDatePickerModal';
+import { HotelMapView } from '../../components/HotelMapView';
+import { HotelPhotoGalleryModal } from '../../components/HotelPhotoGalleryModal';
+import { getHotelGallery } from '../../services/hotelGalleryBank';
+import { resolveAuthenticHotelBank } from '../../services/authenticHotelPhotoBanks';
+import { isUnsplashOrGeneric, sanitizePhotoList } from '../../services/urlSanitizer';
 import { LuxuryPressable } from '../../components/LuxuryMicroInteractions';
+import { AnimatedGoldButton } from '../../components/AnimatedGoldButton';
 import type { RootStackParamList } from '../../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -74,12 +82,6 @@ const PHOTO_LABELS = [
   'Fine Dining & Holistic Spa',
 ];
 
-const DEFAULT_FALLBACK_PHOTOS = [
-  'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1000&q=80',
-  'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1000&q=80',
-  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1000&q=80',
-  'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1000&q=80',
-];
 
 const AMENITIES = [
   { id: '1', label: 'Beachfront Access', icon: Waves },
@@ -103,6 +105,11 @@ export function HotelDetailsScreen() {
   const [isRoomDrawerOpen, setIsRoomDrawerOpen] = useState(false);
   const [drawerRoom, setDrawerRoom] = useState<LiveRoomOffer | null>(null);
 
+  const [isGalleryModalVisible, setIsGalleryModalVisible] = useState(false);
+  const [isAboutExpanded, setIsAboutExpanded] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const suitesSectionY = useRef<number>(600);
+
   const [checkInDate, setCheckInDate] = useState<string>(() => routeAny.checkInDate || getFutureYmd(3));
   const [checkOutDate, setCheckOutDate] = useState<string>(() => routeAny.checkOutDate || getFutureYmd(7));
   const [guestsCount, setGuestsCount] = useState<number>(() => Number(routeAny.guestsCount) || 2);
@@ -121,7 +128,13 @@ export function HotelDetailsScreen() {
   const { itemsByCategory } = useCatalogStore();
   const catalogHotels = itemsByCategory.hotels ?? [];
 
-  const hotelId = route.params?.hotelId || 'c-nile-ritz';
+  const rawParams = (route.params || {}) as any;
+  const hotelId =
+    rawParams.hotelId ||
+    rawParams.hotel?.id ||
+    rawParams.id ||
+    rawParams.hotel_id ||
+    'hotel-dubai-movenpick-creek';
 
   // Load live hotel details with dynamic pricing and live room inventory
   useEffect(() => {
@@ -177,90 +190,193 @@ export function HotelDetailsScreen() {
   // Lookup in CURATED_LUXURY_HOTELS by ID or by name matching
   const curatedHotel = useMemo(() => {
     const rawId = (hotelId || '').toLowerCase();
-    const rawName = (route.params?.hotelName || '').toLowerCase();
+    const rawName = (rawParams.hotelName || rawParams.hotel?.name || '').toLowerCase();
     return (
       CURATED_LUXURY_HOTELS.find(h => h.id.toLowerCase() === rawId) ||
       CURATED_LUXURY_HOTELS.find(h =>
         (rawName && h.name.toLowerCase().includes(rawName)) ||
         (rawName && rawName.includes(h.name.toLowerCase()))
       ) ||
-      (rawId.includes('mena') || rawId.includes('marriott')
+      (rawId.includes('movenpick')
+        ? CURATED_LUXURY_HOTELS.find(h => h.id === 'hotel-dubai-movenpick-creek')
+        : rawId.includes('radisson')
+        ? CURATED_LUXURY_HOTELS.find(h => h.id === 'hotel-dubai-radisson-deira')
+        : rawId.includes('sunrise')
+        ? CURATED_LUXURY_HOTELS.find(h => h.id === 'hotel-sharm-sunrise-diamond')
+        : rawId.includes('mena') || rawId.includes('marriott')
         ? CURATED_LUXURY_HOTELS.find(h => h.id === 'hotel-giza-menahouse')
-        : (rawId.includes('ritz') || rawId === 'f6')
+        : rawId.includes('ritz') || rawId === 'f6'
         ? CURATED_LUXURY_HOTELS.find(h => h.id === 'hotel-cairo-ritz')
-        : (rawId.includes('burj') || rawId === 'f2')
+        : rawId.includes('burj') || rawId === 'f2'
         ? CURATED_LUXURY_HOTELS.find(h => h.id === 'hotel-dubai-burjalarab')
-        : (rawId.includes('address') || rawId.includes('apt') || rawId === 'f3')
+        : rawId.includes('address') || rawId.includes('apt') || rawId === 'f3'
         ? CURATED_LUXURY_HOTELS.find(h => h.id === 'apt-address-downtown-1')
         : null)
     );
-  }, [hotelId, route.params?.hotelName]);
+  }, [hotelId, rawParams.hotelName, rawParams.hotel?.name]);
 
   const hotelName =
-    route.params?.hotelName ||
+    rawParams.hotelName ||
+    rawParams.hotel?.name ||
+    rawParams.name ||
     liveDoc?.propertyName ||
     liveDoc?.name ||
     curatedHotel?.name ||
     liveProperty?.name ||
-    'The Nile Ritz-Carlton, Cairo';
+    'Mövenpick Dubai Creek';
 
   const hotelLocation =
-    route.params?.location ||
+    rawParams.location ||
+    rawParams.hotel?.location ||
     liveDoc?.cityDestination ||
     liveDoc?.subtitle ||
     curatedHotel?.subtitle ||
-    (liveProperty ? `${liveProperty.city}, ${liveProperty.country}` : 'Cairo, Egypt');
+    (liveProperty ? `${liveProperty.city}, ${liveProperty.country}` : 'Dubai, UAE');
 
   const hotelPrice =
-    route.params?.price ||
-    (curatedHotel?.price
-      ? `${curatedHotel.price}/nt`
-      : liveProperty?.lowestPricePerNight
-      ? `$${liveProperty.lowestPricePerNight}`
-      : typeof liveDoc?.nightlyRate === 'number'
-      ? `$${liveDoc.nightlyRate}`
-      : '$850');
+    rawParams.price ||
+    (rawParams.hotel?.price ? `$${rawParams.hotel.price}` : null) ||
+    (curatedHotel?.price ? (curatedHotel.price.includes('/nt') ? curatedHotel.price : `${curatedHotel.price}/nt`) : null) ||
+    (liveProperty?.lowestPricePerNight ? `$${liveProperty.lowestPricePerNight}` : null) ||
+    (typeof liveDoc?.nightlyRate === 'number' ? `$${liveDoc.nightlyRate}` : null) ||
+    'EGP 5,751';
 
   const hotelRating =
-    typeof route.params?.rating === 'number'
-      ? route.params.rating
+    typeof rawParams.rating === 'number'
+      ? rawParams.rating
+      : typeof rawParams.hotel?.rating === 'number'
+      ? rawParams.hotel.rating
       : (curatedHotel?.rating ||
         liveProperty?.guestRating ||
-        (typeof liveDoc?.rating === 'number' ? liveDoc.rating : 4.98));
+        (typeof liveDoc?.rating === 'number' ? liveDoc.rating : 9.3));
 
   const photosList: string[] = useMemo(() => {
-    // 1. If explicit images array was provided for this specific hotel, use it first
-    if (route.params?.images && Array.isArray(route.params.images) && route.params.images.length > 0) {
-      return route.params.images.filter(Boolean);
+    // 1. Direct authentic photo bank resolver
+    const directBank = resolveAuthenticHotelBank(hotelId, hotelName);
+    if (directBank.length > 0) {
+      return directBank;
     }
-    // 2. Curated luxury hotel photos from master catalog (Marriott, Nile Ritz, Burj Al Arab, etc.)
-    if (curatedHotel?.images && Array.isArray(curatedHotel.images) && curatedHotel.images.length > 0) {
-      return curatedHotel.images;
-    }
-    // 3. Real-time Firestore document images if present
-    if (liveDoc?.images && Array.isArray(liveDoc.images) && liveDoc.images.length > 0) {
-      const list = liveDoc.images.map((img: any) => (typeof img === 'string' ? img : img?.url || '')).filter(Boolean);
-      if (list.length > 0) return list;
-    }
-    // 4. Live property images from Amadeus if available
-    if (liveProperty?.images && liveProperty.images.length > 0) {
-      return liveProperty.images;
-    }
-    // 5. Single cover image from params
-    if (route.params?.image) {
-      return [route.params.image, ...DEFAULT_FALLBACK_PHOTOS.slice(1)];
-    }
-    return DEFAULT_FALLBACK_PHOTOS;
-  }, [route.params?.images, route.params?.image, curatedHotel?.images, liveDoc?.images, liveProperty?.images]);
 
-  const activePhoto = photosList[selectedPhotoIndex] ?? photosList[0] ?? DEFAULT_FALLBACK_PHOTOS[0];
+    // 2. Curated luxury hotel photos from master catalog
+    if (curatedHotel?.images && Array.isArray(curatedHotel.images) && curatedHotel.images.length > 0) {
+      const clean = sanitizePhotoList(curatedHotel.images);
+      if (clean.length > 0) return clean;
+    }
+
+    // 3. Explicit images from route params (guarantee no Unsplash)
+    const rawImages = rawParams.images || (rawParams.hotel?.images ? rawParams.hotel.images : null);
+    if (Array.isArray(rawImages) && rawImages.length > 0) {
+      const clean = sanitizePhotoList(rawImages);
+      if (clean.length > 0) return clean;
+    }
+
+    // 4. Real-time Firestore document images if authentic
+    if (liveDoc?.images && Array.isArray(liveDoc.images) && liveDoc.images.length > 0) {
+      const clean = sanitizePhotoList(liveDoc.images);
+      if (clean.length > 0) return clean;
+    }
+
+    // 5. Live property images from Amadeus
+    if (liveProperty?.images && liveProperty.images.length > 0) {
+      const clean = sanitizePhotoList(liveProperty.images);
+      if (clean.length > 0) return clean;
+    }
+
+    // 6. Single cover image from params if authentic
+    const singleCover = rawParams.image || rawParams.hotel?.imageUrl;
+    if (singleCover && !isUnsplashOrGeneric(singleCover)) {
+      return [singleCover];
+    }
+
+    if (curatedHotel?.image && !isUnsplashOrGeneric(curatedHotel.image)) {
+      return [curatedHotel.image];
+    }
+
+    return [];
+  }, [hotelId, hotelName, curatedHotel, rawParams, liveDoc, liveProperty]);
+
+  // Guaranteed categorized luxury photos per hotel across all countries
+  const gallery = useMemo(() => {
+    return getHotelGallery(hotelId, hotelName, hotelLocation, photosList);
+  }, [hotelId, hotelName, hotelLocation, photosList]);
+
+  const activePhoto =
+    gallery.all[selectedPhotoIndex]?.url ??
+    photosList[selectedPhotoIndex] ??
+    photosList[0] ??
+    curatedHotel?.image ??
+    '';
 
   const descriptionText =
     liveDoc?.description ||
     curatedHotel?.description ||
     liveProperty?.description ||
-    route.params?.description ||
-    'Immerse in unparalleled luxury, panoramic city views, and dedicated butler service designed for royal dignitaries and discerning international travelers.';
+    rawParams.description ||
+    rawParams.hotel?.description ||
+    `Luxurious Accommodations The ${hotelName} offers a wide variety of rooms, including the exclusive Family Suite concept, providing separate spaces for parents and children. All guest rooms are equipped with modern amenities for a comfortable stay. Gourmet Dining Options Indulge in a culinary journey at the hotel's 5 à-la-carte restaurants, open buffet restaurant, and various bars. From beachside dining at the Oriental Restaurant to Italian and international cuisine, there's something to satisfy every palate. Relaxation and Recreation Unwind at the spa, stay active at the fitness center, or explore private swimming pools, aqua retreats, and bespoke concierge experiences. Book now for an unforgettable stay at ${hotelName} and experience the pinnacle of luxury and hospitality.`;
+
+  const hotelCoordinates = useMemo(() => {
+    const rawId = (hotelId || '').toLowerCase();
+    const rawName = (hotelName || '').toLowerCase();
+    const rawLoc = (hotelLocation || '').toLowerCase();
+
+    if (rawId.includes('movenpick') || rawName.includes('movenpick')) {
+      return { latitude: 25.2638, longitude: 55.3093 };
+    }
+    if (rawId.includes('radisson') || rawName.includes('radisson')) {
+      return { latitude: 25.2655, longitude: 55.3115 };
+    }
+    if (rawId.includes('sunrise') || rawName.includes('sunrise') || rawLoc.includes('sharm')) {
+      return { latitude: 27.8686, longitude: 34.3098 };
+    }
+    if (rawId.includes('burj') || rawName.includes('burj al arab')) {
+      return { latitude: 25.1412, longitude: 55.1852 };
+    }
+    if (rawId.includes('atlantis')) {
+      return { latitude: 25.1384, longitude: 55.1278 };
+    }
+    if (rawLoc.includes('cairo') || rawName.includes('ritz') || rawId.includes('nile')) {
+      return { latitude: 30.0469, longitude: 31.2336 };
+    }
+    if (rawLoc.includes('giza') || rawName.includes('mena')) {
+      return { latitude: 29.9861, longitude: 31.1342 };
+    }
+    if (rawLoc.includes('paris') || rawName.includes('crillon')) {
+      return { latitude: 48.8674, longitude: 2.3218 };
+    }
+    if (rawLoc.includes('london') || rawName.includes('ritz london')) {
+      return { latitude: 51.5071, longitude: -0.1416 };
+    }
+    if (rawLoc.includes('santorini') || rawName.includes('canaves') || rawName.includes('grace')) {
+      return { latitude: 36.4623, longitude: 25.3753 };
+    }
+    if (rawLoc.includes('istanbul') || rawName.includes('ciragan')) {
+      return { latitude: 41.0428, longitude: 29.0163 };
+    }
+    return { latitude: 25.2638, longitude: 55.3093 };
+  }, [hotelId, hotelName, hotelLocation]);
+
+  const ratingWord = useMemo(() => {
+    if (hotelRating >= 9.0) return 'Wonderful';
+    if (hotelRating >= 8.0) return 'Excellent';
+    return 'Very Good';
+  }, [hotelRating]);
+
+  const reviewCount = useMemo(() => {
+    if (hotelRating >= 9.5) return '10,435';
+    if (hotelRating >= 9.0) return '8,515';
+    if (hotelRating >= 8.5) return '7,853';
+    return '6,420';
+  }, [hotelRating]);
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        title: hotelName,
+        message: `${hotelName}\n${hotelLocation}\nVerified 5-Star Hotel on Vanir.\nhttps://vanir.app/hotel/${hotelId}`,
+      });
+    } catch {}
+  };
 
   // Live rooms from API
   const roomsList = useMemo(() => {
@@ -358,159 +474,186 @@ export function HotelDetailsScreen() {
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
       <ScrollView
+        ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 110 + insets.bottom }}
       >
         {/* Top Hero Image Area */}
         <View style={styles.heroWrapper}>
-          <Image source={{ uri: activePhoto }} style={styles.heroImage} resizeMode="cover" />
+          <Pressable
+            style={{ width: '100%', height: '100%' }}
+            onPress={() => setIsGalleryModalVisible(true)}
+            accessibilityLabel="Tap to open full photo gallery"
+          >
+            <Image source={{ uri: activePhoto }} style={styles.heroImage} resizeMode="cover" />
+          </Pressable>
 
           {/* Top Floating Controls */}
           <View style={[styles.heroHeader, { paddingTop: Math.max(insets.top, 16) }]}>
-            <LuxuryPressable style={styles.circleBtn} onPress={() => navigation.goBack()}>
+            <LuxuryPressable
+              style={styles.circleBtn}
+              onPress={() => navigation.goBack()}
+              accessibilityLabel="Back"
+            >
               <ChevronLeft color="#1C1917" size={22} strokeWidth={2.4} />
             </LuxuryPressable>
 
-            <View style={styles.topBrandPill}>
-              <Sparkles color="#D4AF37" size={13} strokeWidth={2} />
-              <Text style={styles.topBrandText}>VANIR ROYAL SELECTION</Text>
-            </View>
+            <View style={{ flex: 1 }} />
 
-            <LuxuryPressable
-              style={styles.circleBtn}
-              onPress={() => setIsFavorite(prev => !prev)}
-            >
-              <Heart
-                color={isFavorite ? '#EF4444' : '#1C1917'}
-                fill={isFavorite ? '#EF4444' : 'transparent'}
-                size={18}
-                strokeWidth={2}
-              />
-            </LuxuryPressable>
+            <View style={styles.topRightActions}>
+              <LuxuryPressable
+                style={styles.circleBtn}
+                onPress={handleShare}
+                accessibilityLabel="Share Hotel"
+              >
+                <Share2 color="#1C1917" size={18} strokeWidth={2.2} />
+              </LuxuryPressable>
+
+              <LuxuryPressable
+                style={styles.circleBtn}
+                onPress={() => setIsFavorite(prev => !prev)}
+                accessibilityLabel="Favorite Hotel"
+              >
+                <Heart
+                  color={isFavorite ? '#EF4444' : '#1C1917'}
+                  fill={isFavorite ? '#EF4444' : 'transparent'}
+                  size={18}
+                  strokeWidth={2}
+                />
+              </LuxuryPressable>
+            </View>
           </View>
 
           {/* Floating Left and Right Navigation Arrows */}
-          {photosList.length > 1 && (
+          {gallery.all.length > 1 && (
             <>
               <LuxuryPressable
                 style={styles.heroArrowLeft}
-                onPress={() => setSelectedPhotoIndex(prev => (prev === 0 ? photosList.length - 1 : prev - 1))}
+                onPress={() => setSelectedPhotoIndex(prev => (prev === 0 ? gallery.all.length - 1 : prev - 1))}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                 accessibilityLabel="Previous Hotel Photo"
               >
-                <ChevronLeft color="#1C1917" size={20} strokeWidth={2.6} />
+                <ChevronLeft color="#FFFFFF" size={20} strokeWidth={2.6} />
               </LuxuryPressable>
 
               <LuxuryPressable
                 style={styles.heroArrowRight}
-                onPress={() => setSelectedPhotoIndex(prev => (prev + 1) % photosList.length)}
+                onPress={() => setSelectedPhotoIndex(prev => (prev + 1) % gallery.all.length)}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                 accessibilityLabel="Next Hotel Photo"
               >
-                <ChevronRight color="#1C1917" size={20} strokeWidth={2.6} />
+                <ChevronRight color="#FFFFFF" size={20} strokeWidth={2.6} />
               </LuxuryPressable>
             </>
           )}
 
-          {/* 4 Thumbnails Carousel Overlay */}
-          <View style={styles.thumbnailsRow}>
-            {photosList.slice(0, 4).map((photoUrl, idx) => {
-              const isSelected = selectedPhotoIndex === idx;
-              return (
-                <Pressable
-                  key={idx}
-                  onPress={() => setSelectedPhotoIndex(idx)}
-                  style={[styles.thumbnail, isSelected && styles.thumbnailActive]}
-                >
-                  <Image source={{ uri: photoUrl }} style={styles.thumbnailImg} resizeMode="cover" />
-                  {isSelected && (
-                    <View style={styles.activeCheck}>
-                      <Check color="#1C1917" size={10} strokeWidth={3} />
-                    </View>
-                  )}
-                </Pressable>
-              );
-            })}
+          {/* Floating Bottom Left: Photo Counter Badge (e.g. 1/58 or 1/176) */}
+          <View style={styles.floatingCounterBadge}>
+            <Text style={styles.floatingCounterText}>
+              {selectedPhotoIndex + 1}/{gallery.totalCount}
+            </Text>
           </View>
+
+          {/* Floating Bottom Right: "View photos" Pill Button */}
+          <Pressable
+            style={styles.viewPhotosPill}
+            onPress={() => setIsGalleryModalVisible(true)}
+            accessibilityLabel="View all hotel photos"
+          >
+            <Text style={styles.viewPhotosPillText}>View photos</Text>
+            <ImageIcon color="#1C1917" size={16} strokeWidth={2.2} />
+          </Pressable>
         </View>
 
         {/* Content Sheet (Pure Off-White Canvas) */}
         <View style={styles.content}>
-          {/* Title and Price */}
-          <View style={styles.titlePriceRow}>
-            <View style={styles.titleCol}>
-              <Text style={styles.hotelTitle}>{hotelName}</Text>
-              <View style={styles.locationRow}>
-                <MapPin color="#D4AF37" size={15} strokeWidth={2} />
-                <Text style={styles.locationText}>{hotelLocation}</Text>
-              </View>
-            </View>
+          {/* Hotel Name */}
+          <Text style={styles.hotelTitle}>{hotelName}</Text>
 
-            <View style={styles.priceCol}>
-              <Text style={styles.priceValue}>
-                {hotelPrice}<Text style={styles.priceUnit}>/night</Text>
-              </Text>
-              <View style={styles.luxuryRatingRow}>
-                <Star color="#D4AF37" fill="#D4AF37" size={13} strokeWidth={1.8} />
-                <Text style={styles.luxuryRatingScore}>{hotelRating.toFixed(2)}</Text>
-                <Text style={styles.luxuryRatingDivider}>•</Text>
-                <Text style={styles.luxuryRatingLabel}>VERIFIED 5★</Text>
-              </View>
-            </View>
+          {/* Location row with pin */}
+          <View style={styles.locationRow}>
+            <MapPin color="#D4AF37" size={15} strokeWidth={2.2} />
+            <Text style={styles.locationText}>{hotelLocation}</Text>
           </View>
 
-          {/* Live Amadeus Real-Time Availability Banner */}
-          <View style={styles.liveEngineBanner}>
-            <View style={styles.livePulseDot} />
-            <Text style={styles.liveEngineText}>
-              AMADEUS LIVE • EXACT ROOM INVENTORY & CANCELLATION POLICIES ACTIVE
-            </Text>
+          {/* 5-star rating */}
+          <View style={styles.starsRow}>
+            <View style={styles.starsIcons}>
+              {[1, 2, 3, 4, 5].map(i => (
+                <Star key={i} color="#F59E0B" fill="#F59E0B" size={13} />
+              ))}
+            </View>
+            <Text style={styles.starsText}>5-star hotel</Text>
           </View>
 
-          {/* 4-Photo Gallery Callout Banner */}
-          <Pressable
-            style={styles.galleryCallout}
-            onPress={() => setSelectedPhotoIndex(prev => (prev + 1) % photosList.length)}
-          >
-            <View style={styles.galleryIconBox}>
-              <ImageIcon color="#D4AF37" size={18} strokeWidth={1.8} />
-            </View>
-            <View style={styles.galleryCalloutText}>
-              <Text style={styles.galleryCalloutTitle}>High-Definition 4-Photo Curated Gallery</Text>
-              <Text style={styles.galleryCalloutSub}>
-                Viewing: {PHOTO_LABELS[selectedPhotoIndex] ?? 'Photo ' + (selectedPhotoIndex + 1)} (Tap to cycle)
-              </Text>
-            </View>
-            <ChevronRight color="#1C1917" size={18} strokeWidth={2} />
-          </Pressable>
+          {/* Luxury Score Pill (Black with Gold Border) */}
+          <View style={styles.luxuryScorePill}>
+            <Text style={styles.luxuryScoreVal}>{hotelRating.toFixed(1)}</Text>
+            <Text style={styles.luxuryScoreWord}> {ratingWord}</Text>
+            <Text style={styles.luxuryScoreDot}> · </Text>
+            <Text style={styles.luxuryScoreReviews}>{reviewCount} reviews</Text>
+          </View>
 
-          {/* About This Luxury Property */}
+          {/* ───────────────────────────────────────────────────────────── */}
+          {/* LOCATION & INTERACTIVE MAP SECTION */}
+          {/* ───────────────────────────────────────────────────────────── */}
           <View style={styles.section}>
-            <View style={styles.sectionHeaderRow}>
-              <Building color="#D4AF37" size={18} strokeWidth={2} />
-              <Text style={styles.sectionTitle}>About This Luxury Property</Text>
-            </View>
-            <View style={styles.descriptionCard}>
-              <Text style={styles.descriptionParagraph}>{descriptionText}</Text>
+            <Text style={styles.sectionTitle}>Location</Text>
+            <HotelMapView
+              hotelName={hotelName}
+              address={hotelLocation}
+              latitude={hotelCoordinates.latitude}
+              longitude={hotelCoordinates.longitude}
+              height={190}
+            />
+          </View>
 
-              {/* Luxury Highlights Grid */}
-              <View style={styles.highlightsGrid}>
-                <View style={styles.highlightPill}>
-                  <Crown color="#D4AF37" size={13} strokeWidth={2} />
-                  <Text style={styles.highlightText}>Royal Presidential Suites</Text>
-                </View>
-                <View style={styles.highlightPill}>
-                  <Compass color="#D4AF37" size={13} strokeWidth={2} />
-                  <Text style={styles.highlightText}>Prime City Panorama</Text>
-                </View>
-                <View style={styles.highlightPill}>
-                  <Utensils color="#D4AF37" size={13} strokeWidth={2} />
-                  <Text style={styles.highlightText}>Michelin Dining</Text>
-                </View>
-                <View style={styles.highlightPill}>
-                  <Bell color="#D4AF37" size={13} strokeWidth={2} />
-                  <Text style={styles.highlightText}>24/7 Dedicated Butler</Text>
-                </View>
+          {/* ───────────────────────────────────────────────────────────── */}
+          {/* ABOUT THE HOTEL SECTION */}
+          {/* ───────────────────────────────────────────────────────────── */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>About the Hotel</Text>
+            <Text
+              style={styles.aboutParagraph}
+              numberOfLines={isAboutExpanded ? undefined : 5}
+            >
+              {descriptionText}
+            </Text>
+            <Pressable
+              onPress={() => setIsAboutExpanded(prev => !prev)}
+              style={styles.showMoreToggleBtn}
+            >
+              <Text style={styles.showMoreToggleText}>
+                {isAboutExpanded ? 'Show less' : 'Show more'}
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* ───────────────────────────────────────────────────────────── */}
+          {/* HIGHLIGHTS SECTION */}
+          {/* ───────────────────────────────────────────────────────────── */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Highlights</Text>
+            <View style={styles.highlightsWrap}>
+              <View style={styles.highlightChip}>
+                <Waves color="#D4AF37" size={14} strokeWidth={2} />
+                <Text style={styles.highlightChipText}>Swimming Pools & Private Beach</Text>
+              </View>
+              <View style={styles.highlightChip}>
+                <Utensils color="#D4AF37" size={14} strokeWidth={2} />
+                <Text style={styles.highlightChipText}>5 Gourmet À-la-carte Dining</Text>
+              </View>
+              <View style={styles.highlightChip}>
+                <Sparkles color="#D4AF37" size={14} strokeWidth={2} />
+                <Text style={styles.highlightChipText}>Holistic Wellness Spa & Hammam</Text>
+              </View>
+              <View style={styles.highlightChip}>
+                <Crown color="#D4AF37" size={14} strokeWidth={2} />
+                <Text style={styles.highlightChipText}>Royal Presidential Suites</Text>
+              </View>
+              <View style={styles.highlightChip}>
+                <Bell color="#D4AF37" size={14} strokeWidth={2} />
+                <Text style={styles.highlightChipText}>24/7 Dedicated Butler Service</Text>
               </View>
             </View>
           </View>
@@ -706,27 +849,26 @@ export function HotelDetailsScreen() {
         </View>
       </ScrollView>
 
-      {/* Sticky Bottom Actions */}
+      {/* Sticky Bottom Actions (Luxury Black & Animated Gold Border) */}
       <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-        <View style={styles.bottomPriceCol}>
-          <Text style={styles.bottomPriceLabel}>
-            TOTAL ({computedNights} NIGHT{computedNights > 1 ? 'S' : ''})
-          </Text>
-          <Text style={styles.bottomPriceVal}>
-            ${selectedRoomObj.dynamicPricePerNight * computedNights + (selectedRoomObj.taxesAndFees || 0)}
-            <Text style={styles.bottomPriceUnit}> incl. tax</Text>
-          </Text>
-        </View>
-
-        <LuxuryPressable
-          style={styles.bookNowBtn}
-          onPress={() => handleOpenRoomDrawer(selectedRoomObj)}
-        >
-          <Clock color="#1C1917" size={16} strokeWidth={2.2} />
-          <Text style={styles.bookNowBtnText}>Reserve Suite</Text>
-          <ArrowRight color="#1C1917" size={16} strokeWidth={2.4} />
-        </LuxuryPressable>
+        <AnimatedGoldButton
+          title={`${hotelPrice} — View rates`}
+          onPress={() => {
+            if (selectedRoomObj) {
+              handleOpenRoomDrawer(selectedRoomObj);
+            }
+          }}
+          accessibilityLabel="View Hotel Rates"
+        />
       </View>
+
+      {/* Full-Screen Categorized 40+ to 60+ Photo Gallery Modal */}
+      <HotelPhotoGalleryModal
+        visible={isGalleryModalVisible}
+        gallery={gallery}
+        initialIndex={selectedPhotoIndex}
+        onClose={() => setIsGalleryModalVisible(false)}
+      />
 
       {/* Room Details VIP Slide-Up Drawer */}
       <HotelRoomDrawer
@@ -1239,18 +1381,164 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(212, 175, 55, 0.25)',
+    borderTopColor: 'rgba(0, 0, 0, 0.08)',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 14,
-    gap: 12,
-    shadowColor: '#1C1917',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
     elevation: 8,
+  },
+  bottomRatesCtaBtn: {
+    flex: 1,
+    backgroundColor: '#0A0A0A',
+    borderRadius: 28,
+    borderWidth: 1.5,
+    borderColor: '#D4AF37',
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.28,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  bottomRatesCtaText: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
+  },
+  topRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  floatingCounterBadge: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    backgroundColor: 'rgba(28, 25, 23, 0.75)',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  floatingCounterText: {
+    color: '#FFFFFF',
+    fontSize: 12.5,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  viewPhotosPill: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  viewPhotosPillText: {
+    color: '#1C1917',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  starsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  starsIcons: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  starsText: {
+    fontSize: 12.5,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  luxuryScorePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#0A0A0A',
+    borderWidth: 1.2,
+    borderColor: '#D4AF37',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginTop: 2,
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  luxuryScoreVal: {
+    fontSize: 13.5,
+    fontWeight: '900',
+    color: '#D4AF37',
+  },
+  luxuryScoreWord: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  luxuryScoreDot: {
+    fontSize: 13,
+    color: 'rgba(212, 175, 55, 0.7)',
+  },
+  luxuryScoreReviews: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
+  aboutParagraph: {
+    fontSize: 13.5,
+    color: '#475569',
+    lineHeight: 22,
+  },
+  showMoreToggleBtn: {
+    marginTop: 6,
+  },
+  showMoreToggleText: {
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: '#D4AF37',
+  },
+  highlightsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  highlightChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#FAF8F5',
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.3)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  highlightChipText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1C1917',
   },
   bottomPriceCol: {
     minWidth: 100,

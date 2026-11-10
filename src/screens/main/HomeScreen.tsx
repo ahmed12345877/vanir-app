@@ -77,7 +77,6 @@ import {
   OffersIcon,
 } from '../../components/LuxuryNavIcons';
 import { Vanir3DIcon } from '../../components/Vanir3DIcon';
-import { InteractiveServicesSection } from '../../components/InteractiveServicesSection';
 import {
   LuxuryPressable,
   LUXURY_EASE,
@@ -405,8 +404,10 @@ function normalizeFeedCards(
       const title = matchedMena?.name || c.title || 'Marriott Mena House, Giza Pyramids';
       const subtitle = matchedMena?.subtitle || c.subtitle || 'Pyramids Road, Giza, Cairo, Egypt • Royal Vista';
       const price = matchedMena?.price ? (matchedMena.price.includes('/nt') ? matchedMena.price : `${matchedMena.price}/nt`) : (c.price || '$920/nt');
-      const img = matchedMena?.image || c.image || 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=700&q=75';
-      const imgs = (matchedMena?.images && matchedMena.images.length > 0) ? matchedMena.images : (c.images && c.images.length > 0 ? c.images : [img]);
+      const img = matchedMena?.image || c.image || 'https://cf.bstatic.com/xdata/images/hotel/max1280x900/283315758.jpg?k=9e7a6ceee1bd9db60d7a2b0710bc2552a87098120d973e1d139e38c689a4927e';
+      const rawImgs = (matchedMena?.images && matchedMena.images.length > 0) ? matchedMena.images : (c.images && c.images.length > 0 ? c.images : [img]);
+      const imgs = rawImgs.filter((u: string) => u && !u.includes('unsplash.com'));
+      const finalImgs = imgs.length > 0 ? imgs : [img];
       return {
         ...c,
         category: 'hotels',
@@ -414,7 +415,7 @@ function normalizeFeedCards(
         subtitle,
         price,
         image: img,
-        images: imgs,
+        images: finalImgs,
         routeTarget: 'HotelDetails',
         routeParams: {
           hotelId: matchedMena?.id || 'hotel-giza-menahouse',
@@ -422,7 +423,7 @@ function normalizeFeedCards(
           location: subtitle,
           price,
           image: img,
-          images: imgs,
+          images: finalImgs,
           description: matchedMena?.description || 'Legendary 1869 royal hunting lodge set in 40 private acres of fragrant jasmine gardens with unhindered, breathtaking views of the Great Pyramids of Giza. Features antique handcrafted furniture, the 139 Pavilion garden restaurant with pyramid reflections, and private sunrise archaeological access.',
           rating: typeof matchedMena?.rating === 'number' ? matchedMena.rating : (typeof c.rating === 'number' ? c.rating : 4.98),
         },
@@ -438,8 +439,10 @@ function normalizeFeedCards(
       const title = matchedRitz?.name || c.title || 'The Nile Ritz-Carlton Cairo';
       const subtitle = matchedRitz?.subtitle || c.subtitle || 'Nile Corniche, Downtown Cairo • Royal Suites';
       const price = matchedRitz?.price ? (matchedRitz.price.includes('/nt') ? matchedRitz.price : `${matchedRitz.price}/nt`) : (c.price || '$850/nt');
-      const img = matchedRitz?.image || c.image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&q=75';
-      const imgs = (matchedRitz?.images && matchedRitz.images.length > 0) ? matchedRitz.images : (c.images && c.images.length > 0 ? c.images : [img]);
+      const img = matchedRitz?.image || c.image || 'https://cf.bstatic.com/xdata/images/hotel/max1280x900/878484080.jpg?k=5dfe2ec5776e4dfbef7b567f155088f885328420c48423a1ed7316535707f9dd';
+      const rawImgs = (matchedRitz?.images && matchedRitz.images.length > 0) ? matchedRitz.images : (c.images && c.images.length > 0 ? c.images : [img]);
+      const imgs = rawImgs.filter((u: string) => u && !u.includes('unsplash.com'));
+      const finalImgs = imgs.length > 0 ? imgs : [img];
       return {
         ...c,
         category: 'hotels',
@@ -447,7 +450,7 @@ function normalizeFeedCards(
         subtitle,
         price,
         image: img,
-        images: imgs,
+        images: finalImgs,
         routeTarget: 'HotelDetails',
         routeParams: {
           hotelId: matchedRitz?.id || 'hotel-cairo-ritz',
@@ -455,7 +458,7 @@ function normalizeFeedCards(
           location: subtitle,
           price,
           image: img,
-          images: imgs,
+          images: finalImgs,
           description: matchedRitz?.description || 'Iconic palatial hotel set on the Nile River between the historic Egyptian Museum and Tahrir Square. Offers palatial suites, panoramic river balconies, an Olympic outdoor pool with private cabanas, and 24/7 royal butler service.',
           rating: typeof matchedRitz?.rating === 'number' ? matchedRitz.rating : (typeof c.rating === 'number' ? c.rating : 4.9),
         },
@@ -472,8 +475,10 @@ function normalizeFeedCards(
       const title = matchedBurj?.name || c.title || 'Burj Al Arab Jumeirah';
       const subtitle = matchedBurj?.subtitle || c.subtitle || 'Jumeirah Beach Road, Dubai, UAE • 7-Star Wonder';
       const price = matchedBurj?.price ? (matchedBurj.price.includes('/nt') ? matchedBurj.price : `${matchedBurj.price}/nt`) : (c.price || '$2,400/nt');
-      const img = matchedBurj?.image || c.image || 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&q=75';
-      const imgs = (matchedBurj?.images && matchedBurj.images.length > 0) ? matchedBurj.images : (c.images && c.images.length > 0 ? c.images : [img]);
+      const img = matchedBurj?.image || c.image || 'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595186.jpg?k=3eff038fbb2e97745c110ae0c97af41300fc6da3d7583c001146c827eef899a3';
+      const rawImgs = (matchedBurj?.images && matchedBurj.images.length > 0) ? matchedBurj.images : (c.images && c.images.length > 0 ? c.images : [img]);
+      const imgs = rawImgs.filter((u: string) => u && !u.includes('unsplash.com'));
+      const finalImgs = imgs.length > 0 ? imgs : [img];
       return {
         ...c,
         category: 'hotels',
@@ -646,12 +651,12 @@ const FEED_CARDS: FeedCardItem[] = [
     category: 'hotels',
     tag: 'EXCLUSIVE 25% PRIVILEGE',
     tagColor: '#D4AF37',
-    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&q=75',
+    image: 'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595186.jpg?k=3eff038fbb2e97745c110ae0c97af41300fc6da3d7583c001146c827eef899a3',
     images: [
-      'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&q=75',
-      'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=700&q=75',
-      'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=700&q=75',
-      'https://images.unsplash.com/photo-1544025162-d76694265947?w=700&q=75',
+      'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595186.jpg?k=3eff038fbb2e97745c110ae0c97af41300fc6da3d7583c001146c827eef899a3',
+      'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595188.jpg?k=4d4f8ff4d3d29810842db74088a531cfb56c4d7ec6beaa6a2ecb047ca4d08129',
+      'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595189.jpg?k=b4e9f54666f07b1d9dcb89ca618bfa63a562ef2dd0ff792a6c8e317c76fc4ce4',
+      'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595191.jpg?k=5dcf023fe11cfc684cf0cf39b69996a60dbb6c7a76e7368d50bf699905c19e59',
     ],
     title: 'Burj Al Arab Jumeirah',
     subtitle: 'Jumeirah Beach Road, Dubai, UAE • 7-Star Wonder',
@@ -664,12 +669,12 @@ const FEED_CARDS: FeedCardItem[] = [
       location: 'Jumeirah Beach Road, Dubai, UAE',
       price: '$2,400/nt',
       rating: 5.0,
-      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&q=75',
+      image: 'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595186.jpg?k=3eff038fbb2e97745c110ae0c97af41300fc6da3d7583c001146c827eef899a3',
       images: [
-        'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&q=75',
-        'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=700&q=75',
-        'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=700&q=75',
-        'https://images.unsplash.com/photo-1544025162-d76694265947?w=700&q=75',
+        'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595186.jpg?k=3eff038fbb2e97745c110ae0c97af41300fc6da3d7583c001146c827eef899a3',
+        'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595188.jpg?k=4d4f8ff4d3d29810842db74088a531cfb56c4d7ec6beaa6a2ecb047ca4d08129',
+        'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595189.jpg?k=b4e9f54666f07b1d9dcb89ca618bfa63a562ef2dd0ff792a6c8e317c76fc4ce4',
+        'https://cf.bstatic.com/xdata/images/hotel/max1280x900/646595191.jpg?k=5dcf023fe11cfc684cf0cf39b69996a60dbb6c7a76e7368d50bf699905c19e59',
       ],
     },
   },
@@ -677,12 +682,12 @@ const FEED_CARDS: FeedCardItem[] = [
     id: 'f3',
     category: 'apartments',
     tag: 'Luxury Serviced Residences',
-    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=700&q=75',
+    image: 'https://cf.bstatic.com/xdata/images/hotel/max1280x900/419598307.jpg?k=a668c04968694f3f08ead6e7b101d8b286fea5d0e8bcd3913633a7b064a29bf6',
     images: [
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=700&q=75',
-      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=700&q=75',
-      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=700&q=75',
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700&q=75',
+      'https://cf.bstatic.com/xdata/images/hotel/max1280x900/419598307.jpg?k=a668c04968694f3f08ead6e7b101d8b286fea5d0e8bcd3913633a7b064a29bf6',
+      'https://cf.bstatic.com/xdata/images/hotel/max1280x900/419598229.jpg?k=b5431ae536cc38317c467bcea0e8ee1dcfafb153be0e9fbbaa04f0a0ac494bf3',
+      'https://cf.bstatic.com/xdata/images/hotel/max1280x900/419598309.jpg?k=66a36fa2472d9a9cb859424c7ff41999912061266c2db675db2d61d15c72199b',
+      'https://cf.bstatic.com/xdata/images/hotel/max1280x900/419598320.jpg?k=82a1a8b1ef38ff40c15984efb794f92d4b53361122a6136d8924ce0259b9a67e',
     ],
     title: 'The Address Downtown Residences',
     subtitle: 'Downtown Dubai • Panoramic Burj Khalifa View',
@@ -698,7 +703,7 @@ const FEED_CARDS: FeedCardItem[] = [
     id: 'f4',
     category: 'cars',
     tag: 'Chauffeur & Executive Fleet',
-    image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=75',
+    image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=1280&q=85',
     title: 'Rolls-Royce Phantom VIII',
     subtitle: 'Uniformed Chauffeur • Wi-Fi & Refreshments • Massage Seats',
     price: '$800/transfer',
@@ -1352,6 +1357,16 @@ export function HomeScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
+      {/* Main Feed with Partner Airlines and Offer Dividers */}
+      <ScrollView
+        style={{ flex: 1, backgroundColor: '#FAF9F6' }}
+        showsVerticalScrollIndicator={false}
+        removeClippedSubviews={Platform.OS === 'android'}
+        contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#D4AF37" />
+        }
+      >
       {/* Dark Glass Hero Header */}
       <View style={styles.heroContainer}>
         <Image
@@ -1489,16 +1504,6 @@ export function HomeScreen() {
         </ScrollView>
       </View>
 
-      {/* Main Feed with Partner Airlines and Offer Dividers */}
-      <ScrollView
-        style={{ flex: 1, backgroundColor: '#FAF9F6' }}
-        showsVerticalScrollIndicator={false}
-        removeClippedSubviews={Platform.OS === 'android'}
-        contentContainerStyle={[styles.feedScroll, { paddingBottom: 100 + insets.bottom }]}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#D4AF37" />
-        }
-      >
         {/* Instant Emergency / Announcement Notice from Admin Dashboard */}
         {serviceControls?.emergency_notice ? (
           <View
@@ -1526,8 +1531,11 @@ export function HomeScreen() {
           </View>
         ) : null}
 
-        {/* Curated International Capitals & Red Sea Sanctuaries (Zero duplicate 'Explore Services' clutter) */}
-        <InteractiveServicesSection navigation={navigation} destinationsOnly={true} />
+
+        <View style={styles.homeSectionHead}>
+          <Text style={styles.homeSectionTitle}>Our Signature Services</Text>
+          <Text style={styles.homeSectionSub}>Flights, stays, fleet and yachts — all in one place</Text>
+        </View>
 
         {/* Feed Cards with Promotional Offer Dividers */}
         {filteredCards.map((card, index) => {
@@ -1549,6 +1557,13 @@ export function HomeScreen() {
                       style={styles.cardImage}
                       resizeMode="cover"
                       fadeDuration={0}
+                    />
+
+                    {/* Dark scrim so text sits directly on the photo, no white box */}
+                    <LinearGradient
+                      colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.55)', 'rgba(0,0,0,0.88)']}
+                      style={styles.cardTextScrim}
+                      pointerEvents="none"
                     />
 
                     {/* Tag Badge Top Left */}
@@ -1787,6 +1802,30 @@ export function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  cardTextScrim: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '62%',
+  },
+  homeSectionHead: {
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 10,
+  },
+  homeSectionTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1C1917',
+    letterSpacing: 0.3,
+  },
+  homeSectionSub: {
+    fontSize: 12.5,
+    fontWeight: '500',
+    color: '#64748B',
+    marginTop: 3,
+  },
   safe: {
     flex: 1,
     backgroundColor: '#050A14',
@@ -2379,20 +2418,15 @@ const styles = StyleSheet.create({
   },
   bottomOverlayCardFlight: {
     position: 'absolute',
-    bottom: 14,
+    bottom: 6,
     left: 14,
     right: 14,
-    backgroundColor: 'rgba(255,255,255,0.97)',
+    backgroundColor: 'transparent',
     borderRadius: 18,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.35)',
+    elevation: 0,
+    borderWidth: 0,
   },
   flightCarrierHeader: {
     flexDirection: 'row',
@@ -2401,7 +2435,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     marginBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: 'rgba(255,255,255,0.22)',
   },
   flightCarrierLeft: {
     flexDirection: 'row',
@@ -2421,13 +2455,19 @@ const styles = StyleSheet.create({
   flightCarrierTitle: {
     fontSize: 11.5,
     fontWeight: '800',
-    color: '#1C1917',
+    color: '#FFFFFF',
     letterSpacing: 0.8,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   flightCarrierSub: {
     fontSize: 9,
     fontWeight: '600',
-    color: '#64748B',
+    color: 'rgba(255,255,255,0.88)',
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   flightPartnerBadge: {
     width: 22,
@@ -2443,7 +2483,10 @@ const styles = StyleSheet.create({
   flightVerifiedText: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#64748B',
+    color: 'rgba(255,255,255,0.88)',
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   flightRouteRowFullWidth: {
     flexDirection: 'row',
@@ -2455,14 +2498,20 @@ const styles = StyleSheet.create({
   airportCodeBig: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#1C1917',
+    color: '#FFFFFF',
     letterSpacing: 2,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   cityNameBig: {
     fontSize: 11,
-    color: '#64748B',
+    color: 'rgba(255,255,255,0.88)',
     fontWeight: '700',
     marginTop: 1,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   flightLineBig: {
     flex: 1,
@@ -2499,7 +2548,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: 'rgba(255,255,255,0.22)',
     width: '100%',
   },
   fiveStarsRow: {
@@ -2510,8 +2559,11 @@ const styles = StyleSheet.create({
   flightStarsBadgeText: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#D4AF37',
+    color: '#F2D27A',
     letterSpacing: 0.5,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   flightExploreBtnCompact: {
     flexDirection: 'row',
@@ -2529,19 +2581,14 @@ const styles = StyleSheet.create({
   },
   bottomOverlayCard: {
     position: 'absolute',
-    bottom: 14,
+    bottom: 6,
     left: 14,
     right: 14,
-    backgroundColor: 'rgba(255,255,255,0.97)',
+    backgroundColor: 'transparent',
     borderRadius: 18,
     padding: 14,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.25)',
+    elevation: 0,
+    borderWidth: 0,
   },
   flightRouteRow: {
     flexDirection: 'row',
@@ -2593,9 +2640,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 17,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
     marginBottom: 4,
     letterSpacing: -0.3,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   cardSubRow: {
     flexDirection: 'row',
@@ -2604,9 +2654,12 @@ const styles = StyleSheet.create({
   },
   cardSubtitle: {
     fontSize: 12.5,
-    color: '#78716C',
+    color: 'rgba(255,255,255,0.88)',
     fontWeight: '500',
     flexShrink: 1,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   ratingInline: {
     flexDirection: 'row',
@@ -2622,9 +2675,12 @@ const styles = StyleSheet.create({
   cardPrice: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#D4AF37',
+    color: '#F2D27A',
     marginLeft: 8,
     letterSpacing: -0.3,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   cardRatingGradientRow: {
     flexDirection: 'row',
@@ -2690,18 +2746,24 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(212,175,55,0.2)',
+    borderTopColor: 'rgba(255,255,255,0.22)',
   },
   cardStarRatingText: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#D4AF37',
+    color: '#F2D27A',
     letterSpacing: 0.3,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   cardStarRatingLabel: {
     fontSize: 11,
-    color: '#78716C',
+    color: 'rgba(255,255,255,0.88)',
     fontWeight: '600',
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
 
   /* VIP Search Bar */
