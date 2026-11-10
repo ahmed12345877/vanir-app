@@ -8,8 +8,8 @@ import { signIn, signInGoogle } from '@/lib/auth';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('admin@vanirgroup.com');
-  const [password, setPassword] = useState('VanirAdmin@2026!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -197,27 +197,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Pre-configured Authorized Credentials Card */}
-          <div className="mt-5 rounded-2xl border border-[rgba(201,168,76,0.25)] bg-[rgba(201,168,76,0.06)] p-3.5">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#ecd58e]">
-              <Sparkles className="h-3.5 w-3.5 text-[#c9a84c]" />
-              <span>Official Admin Account</span>
-            </div>
-            <div className="mt-2 space-y-1 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-[#8892B0]">Email:</span>
-                <span className="font-mono font-medium text-[#F8F9FA] selection:bg-[#c9a84c]">
-                  admin@vanirgroup.com
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#8892B0]">Password:</span>
-                <span className="font-mono font-medium text-[#c9a84c] selection:bg-[#c9a84c]">
-                  VanirAdmin@2026!
-                </span>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         {/* Footer Info */}
