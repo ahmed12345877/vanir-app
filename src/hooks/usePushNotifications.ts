@@ -324,25 +324,28 @@ export function usePushNotifications(autoRequest = true): PushNotificationState 
       await registerToken(newToken);
     });
 
+    // Handle foreground FCM notifications from Google Play Services
+    foregroundUnsubscribe.current = messaging().onMessage(handleForegroundMessage);
+
     // Subscribe to real-time mobile_push_notifications collection from Admin Hub
     let broadcastUnsub: (() => void) | null = null;
+    let initialLoad = true;
     try {
-      const mountTime = Date.now();
       broadcastUnsub = firestore()
         .collection('mobile_push_notifications')
         .orderBy('sentAt', 'desc')
         .limit(1)
         .onSnapshot(snap => {
+          if (initialLoad) {
+            initialLoad = false;
+            return;
+          }
           if (!snap || snap.empty) return;
           const docSnap = snap.docs[0];
           const data = docSnap.data();
-          const sentTime = data.sentAt?.toMillis ? data.sentAt.toMillis() : Date.now();
-          // Only show alert for notifications sent after component mounted
-          if (sentTime > mountTime - 5000) {
-            const title = data.title || '🔔 VANIR VIP Notification';
-            const body = data.body || 'You have received an exclusive luxury concierge update.';
-            Alert.alert(title, body, [{ text: 'View' }]);
-          }
+          const title = data.title || '🔔 VANIR VIP Notification';
+          const body = data.body || 'You have received an exclusive luxury concierge update.';
+          Alert.alert(title, body, [{ text: 'View' }]);
         });
     } catch {}
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Pressable,
   StatusBar,
@@ -24,12 +23,9 @@ import {
   CheckCheck,
   Sliders,
   Sparkles,
-  Send,
-  Radio,
 } from 'lucide-react-native';
 import { colors } from '../../theme/colors';
 import { borderRadius, spacing } from '../../theme/spacing';
-import { usePushNotifications, triggerTestVipNotification } from '../../hooks/usePushNotifications';
 
 interface NotificationItem {
   id: string;
@@ -37,68 +33,46 @@ interface NotificationItem {
   title: string;
   description: string;
   time: string;
+  timestampMs?: number;
   read: boolean;
 }
 
-const INITIAL_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: 'n1',
-    type: 'booking',
-    title: 'Hotel Suite Confirmed',
-    description: 'Your reservation at Marriott Mena House, Giza Pyramids (Pyramid View Palace Suite) has been confirmed with VIP lounge access included.',
-    time: '2 hours ago',
-    read: false,
-  },
-  {
-    id: 'n2',
-    type: 'offer',
-    title: 'Private Aviation Privilege: 20% Credit',
-    description: 'Receive a complimentary $500 hotel dining voucher when chartering a Bombardier Global 7500 to London or Paris this month.',
-    time: 'Today, 11:30 AM',
-    read: false,
-  },
-  {
-    id: 'n3',
-    type: 'travel',
-    title: 'Your VIP Chauffeur is Assigned',
-    description: 'A Rolls-Royce Phantom VIII chauffeur will await you at Cairo International Airport Terminal 3 for your private hotel transfer.',
-    time: 'Yesterday, 08:15 PM',
-    read: true,
-  },
-  {
-    id: 'n4',
-    type: 'booking',
-    title: 'Global High-Speed eSIM Activated',
-    description: 'Your 10GB Global Roaming Plan is now active. Enjoy seamless high-speed 5G connectivity across 180+ countries worldwide.',
-    time: '2 days ago',
-    read: true,
-  },
-  {
-    id: 'n5',
-    type: 'travel',
-    title: 'Superyacht Majesty 120 Ready for Boarding',
-    description: 'Your 120ft private superyacht, captain, and Michelin-trained onboard private chef are ready at Dubai Harbour Marina.',
-    time: '3 days ago',
-    read: true,
-  },
-  {
-    id: 'n6',
-    type: 'security',
-    title: 'New VIP Device Sign-in Verified',
-    description: 'Your account was successfully accessed from an authorized device. If this was not you, please contact your concierge immediately.',
-    time: '1 week ago',
-    read: true,
-  },
-];
+function formatNotificationTime(timestamp: any): string {
+  if (!timestamp) return 'Recent';
+  try {
+    let date: Date;
+    if (typeof timestamp.toDate === 'function') {
+      date = timestamp.toDate();
+    } else if (timestamp.seconds) {
+      date = new Date(timestamp.seconds * 1000);
+    } else if (typeof timestamp === 'number') {
+      date = new Date(timestamp);
+    } else if (typeof timestamp === 'string') {
+      return timestamp;
+    } else {
+      return 'Recent';
+    }
+
+    const now = Date.now();
+    const diffMin = Math.floor((now - date.getTime()) / (1000 * 60));
+    if (diffMin < 1) return 'Just now';
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHours = Math.floor(diffMin / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  } catch {
+    return 'Recent';
+  }
+}
 
 export function NotificationsScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<'feed' | 'settings'>('feed');
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
-  const [isSendingTest, setIsSendingTest] = useState(false);
-
-  const { fcmToken, permissionStatus, requestPermission } = usePushNotifications(true);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Settings State
   const [bookingAlerts, setBookingAlerts] = useState(true);
@@ -110,40 +84,63 @@ export function NotificationsScreen() {
   // Subscribe to real-time Firestore broadcast and personal notifications
   useEffect(() => {
     let unsubs: Array<() => void> = [];
+    let broadcastItems: NotificationItem[] = [];
+    let personalItems: NotificationItem[] = [];
+
+    const updateCombined = () => {
+      const map = new Map<string, NotificationItem>();
+      [...personalItems, ...broadcastItems].forEach(item => {
+        map.set(item.id, item);
+      });
+      const sorted = Array.from(map.values()).sort((a, b) => {
+        return (b.timestampMs || 0) - (a.timestampMs || 0);
+      });
+      setNotifications(sorted);
+      setIsLoading(false);
+    };
 
     // 1. Subscribe to broadcast mobile_push_notifications sent from Admin Hub
     try {
       const unsubBroadcast = firestore()
         .collection('mobile_push_notifications')
         .orderBy('sentAt', 'desc')
-        .limit(20)
+        .limit(30)
         .onSnapshot(
           snapshot => {
-            if (!snapshot || snapshot.empty) return;
-            const broadcastList: NotificationItem[] = snapshot.docs.map(doc => {
+            if (!snapshot || snapshot.empty) {
+              broadcastItems = [];
+              updateCombined();
+              return;
+            }
+            broadcastItems = snapshot.docs.map(doc => {
               const data = doc.data();
+              const sentAt = data.sentAt;
+              let ms = 0;
+              if (sentAt?.toMillis) ms = sentAt.toMillis();
+              else if (sentAt?.seconds) ms = sentAt.seconds * 1000;
+              else if (typeof sentAt === 'number') ms = sentAt;
+
               return {
                 id: doc.id,
                 type: 'offer',
                 title: data.title || 'VANIR VIP Alert',
                 description: data.body || '',
-                time: 'Recent',
+                time: formatNotificationTime(sentAt),
+                timestampMs: ms,
                 read: false,
               };
             });
-
-            setNotifications(prev => {
-              const liveIds = new Set(broadcastList.map(l => l.id));
-              const remaining = prev.filter(p => !liveIds.has(p.id));
-              return [...broadcastList, ...remaining];
-            });
+            updateCombined();
           },
           err => {
             console.log('[NotificationsScreen] Broadcast subscription notice:', err);
+            setIsLoading(false);
           },
         );
       unsubs.push(unsubBroadcast);
-    } catch {}
+    } catch {
+      setIsLoading(false);
+    }
 
     // 2. Subscribe to user-specific notifications if signed in
     const user = auth().currentUser;
@@ -154,27 +151,33 @@ export function NotificationsScreen() {
           .doc(user.uid)
           .collection('notifications')
           .orderBy('createdAt', 'desc')
-          .limit(25)
+          .limit(30)
           .onSnapshot(
             snapshot => {
-              if (!snapshot || snapshot.empty) return;
-              const liveList: NotificationItem[] = snapshot.docs.map(doc => {
+              if (!snapshot || snapshot.empty) {
+                personalItems = [];
+                updateCombined();
+                return;
+              }
+              personalItems = snapshot.docs.map(doc => {
                 const data = doc.data();
+                const createdAt = data.createdAt;
+                let ms = 0;
+                if (createdAt?.toMillis) ms = createdAt.toMillis();
+                else if (createdAt?.seconds) ms = createdAt.seconds * 1000;
+                else if (typeof createdAt === 'number') ms = createdAt;
+
                 return {
                   id: doc.id,
                   type: data.type || 'booking',
                   title: data.title || 'VIP Concierge Alert',
                   description: data.description || data.body || '',
-                  time: data.time || 'Just now',
+                  time: formatNotificationTime(createdAt),
+                  timestampMs: ms,
                   read: !!data.read,
                 };
               });
-
-              setNotifications(prev => {
-                const liveIds = new Set(liveList.map(l => l.id));
-                const remaining = prev.filter(p => !liveIds.has(p.id));
-                return [...liveList, ...remaining];
-              });
+              updateCombined();
             },
             err => {
               console.log('[NotificationsScreen] Personal subscription notice:', err);
@@ -212,34 +215,6 @@ export function NotificationsScreen() {
       } catch (err) {
         console.log('[NotificationsScreen] batch update error:', err);
       }
-    }
-  };
-
-  const handleSendTestNotification = async () => {
-    if (isSendingTest) return;
-    setIsSendingTest(true);
-    try {
-      if (permissionStatus !== 'granted') {
-        await requestPermission();
-      }
-      const res = await triggerTestVipNotification(
-        '🔔 VANIR VIP: Private Jet Itinerary Confirmed',
-        'Your Gulfstream G700 CAI → LON is confirmed. Chauffeur awaits at VIP Terminal 4.',
-      );
-      if (res.success) {
-        // Prepend local test notification immediately
-        const newNotif: NotificationItem = {
-          id: `test-${Date.now()}`,
-          type: 'travel',
-          title: '🔔 VANIR VIP: Private Jet Itinerary Confirmed',
-          description: 'Your Gulfstream G700 CAI → LON is confirmed. Chauffeur awaits at VIP Terminal 4.',
-          time: 'Just now',
-          read: false,
-        };
-        setNotifications(prev => [newNotif, ...prev]);
-      }
-    } finally {
-      setIsSendingTest(false);
     }
   };
 
@@ -296,38 +271,6 @@ export function NotificationsScreen() {
         )}
       </View>
 
-      {/* FCM Device Status Banner */}
-      <View style={styles.fcmStatusBar}>
-        <View style={styles.fcmStatusLeft}>
-          <View
-            style={[
-              styles.fcmPulseDot,
-              { backgroundColor: permissionStatus === 'granted' ? '#10B981' : '#F59E0B' },
-            ]}
-          />
-          <Text style={styles.fcmStatusText}>
-            {permissionStatus === 'granted'
-              ? 'FCM Push Active • Device Connected'
-              : 'Permission Required • Tap to Enable'}
-          </Text>
-        </View>
-
-        <Pressable
-          style={[styles.testAlertBtn, isSendingTest && { opacity: 0.6 }]}
-          onPress={handleSendTestNotification}
-          disabled={isSendingTest}
-        >
-          {isSendingTest ? (
-            <ActivityIndicator size="small" color="#1C1917" />
-          ) : (
-            <>
-              <Send color="#1C1917" size={13} strokeWidth={2.4} />
-              <Text style={styles.testAlertBtnText}>Send Test Alert</Text>
-            </>
-          )}
-        </Pressable>
-      </View>
-
       {/* Tabs */}
       <View style={styles.tabsRow}>
         <Pressable
@@ -352,45 +295,67 @@ export function NotificationsScreen() {
       </View>
 
       {activeTab === 'feed' ? (
-        <FlatList
-          data={notifications}
-          keyExtractor={item => item.id}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={[styles.listContainer, { paddingBottom: 40 + insets.bottom }]}
-          renderItem={({ item }) => (
-            <Pressable
-              style={[styles.card, !item.read && styles.unreadCard]}
-              onPress={() => {
-                setNotifications(prev =>
-                  prev.map(n => (n.id === item.id ? { ...n, read: true } : n))
-                );
-                const user = auth().currentUser;
-                if (user?.uid && !item.id.startsWith('test-')) {
-                  firestore()
-                    .collection('users')
-                    .doc(user.uid)
-                    .collection('notifications')
-                    .doc(item.id)
-                    .update({ read: true })
-                    .catch(() => {});
-                }
-              }}
-            >
-              <View style={[styles.iconWrapper, { backgroundColor: item.read ? '#1E293B' : '#1C1917' }]}>
-                {getNotificationIcon(item.type)}
-              </View>
-
-              <View style={styles.cardContent}>
-                <View style={styles.cardTopRow}>
-                  <Text style={[styles.cardTitle, !item.read && styles.unreadTitle]}>{item.title}</Text>
-                  {!item.read && <View style={styles.unreadDot} />}
+        isLoading ? (
+          <View style={styles.centerLoading}>
+            <ActivityIndicator size="large" color="#D4AF37" />
+            <Text style={styles.loadingText}>Loading notifications...</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={notifications}
+            keyExtractor={item => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={[
+              styles.listContainer,
+              { paddingBottom: 40 + insets.bottom },
+              notifications.length === 0 && styles.emptyListContainer,
+            ]}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <View style={styles.emptyIconWrapper}>
+                  <Bell color="#D4AF37" size={32} strokeWidth={1.8} />
                 </View>
-                <Text style={styles.cardDesc}>{item.description}</Text>
-                <Text style={styles.cardTime}>{item.time}</Text>
+                <Text style={styles.emptyTitle}>No Notifications Yet</Text>
+                <Text style={styles.emptySubtitle}>
+                  You will receive instant alerts here for your luxury flight reservations, hotel suite confirmations, and exclusive VIP privileges.
+                </Text>
               </View>
-            </Pressable>
-          )}
-        />
+            }
+            renderItem={({ item }) => (
+              <Pressable
+                style={[styles.card, !item.read && styles.unreadCard]}
+                onPress={() => {
+                  setNotifications(prev =>
+                    prev.map(n => (n.id === item.id ? { ...n, read: true } : n))
+                  );
+                  const user = auth().currentUser;
+                  if (user?.uid && !item.id.startsWith('test-')) {
+                    firestore()
+                      .collection('users')
+                      .doc(user.uid)
+                      .collection('notifications')
+                      .doc(item.id)
+                      .update({ read: true })
+                      .catch(() => {});
+                  }
+                }}
+              >
+                <View style={[styles.iconWrapper, { backgroundColor: item.read ? '#1E293B' : '#1C1917' }]}>
+                  {getNotificationIcon(item.type)}
+                </View>
+
+                <View style={styles.cardContent}>
+                  <View style={styles.cardTopRow}>
+                    <Text style={[styles.cardTitle, !item.read && styles.unreadTitle]}>{item.title}</Text>
+                    {!item.read && <View style={styles.unreadDot} />}
+                  </View>
+                  <Text style={styles.cardDesc}>{item.description}</Text>
+                  <Text style={styles.cardTime}>{item.time}</Text>
+                </View>
+              </Pressable>
+            )}
+          />
+        )
       ) : (
         <View style={styles.settingsContainer}>
           <Text style={styles.settingsSectionTitle}>NOTIFICATION PREFERENCES</Text>
@@ -469,20 +434,6 @@ export function NotificationsScreen() {
               />
             </View>
           </View>
-
-          {/* Test Dispatcher in Settings */}
-          <Pressable
-            style={({ pressed }) => [
-              styles.testSectionBtn,
-              pressed && { opacity: 0.8 },
-            ]}
-            onPress={handleSendTestNotification}
-          >
-            <Radio color="#D4AF37" size={18} />
-            <Text style={styles.testSectionBtnText}>
-              Send Test Push Notification
-            </Text>
-          </Pressable>
         </View>
       )}
     </SafeAreaView>
@@ -542,49 +493,6 @@ const styles = StyleSheet.create({
   headerRightPlaceholder: {
     width: 40,
   },
-  fcmStatusBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#1C1917',
-    marginHorizontal: 16,
-    marginTop: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.3)',
-  },
-  fcmStatusLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 8,
-  },
-  fcmPulseDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  fcmStatusText: {
-    color: '#E2E8F0',
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  testAlertBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#D4AF37',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    gap: 5,
-  },
-  testAlertBtnText: {
-    color: '#1C1917',
-    fontSize: 11,
-    fontWeight: '800',
-  },
   tabsRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -618,7 +526,53 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingHorizontal: 16,
+    paddingTop: 8,
     gap: 12,
+  },
+  emptyListContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+  centerLoading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 13,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    paddingVertical: 60,
+  },
+  emptyIconWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: '#1C1917',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    borderWidth: 1.5,
+    borderColor: 'rgba(212, 175, 55, 0.4)',
+  },
+  emptyTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#1C1917',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    color: '#64748B',
+    lineHeight: 20,
+    textAlign: 'center',
   },
   card: {
     flexDirection: 'row',
@@ -724,22 +678,5 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#F1F5F9',
-  },
-  testSectionBtn: {
-    marginTop: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#1C1917',
-    paddingVertical: 14,
-    borderRadius: 14,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.4)',
-  },
-  testSectionBtnText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '700',
   },
 });
