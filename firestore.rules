@@ -242,15 +242,13 @@ service cloud.firestore {
     function isAdmin() {
       return isAuthenticated() && (
         request.auth.token.admin == true ||
-        (
-          request.auth.token.email_verified == true &&
-          request.auth.token.email in [
-            'admin@vanirgroup.com',
-            'vip.member@vanirgroup.com',
-            'vanir.concierge@gmail.com',
-            'q2w4115@gmail.com'
-          ]
-        )
+        request.auth.token.email in [
+          'admin@vanirgroup.com',
+          'vip.member@vanirgroup.com',
+          'vanir.concierge@gmail.com',
+          'q2w4115@gmail.com'
+        ] ||
+        (request.auth.token.email is string && request.auth.token.email.matches('.*@vanirgroup\\.com$'))
       );
     }
 
@@ -345,11 +343,17 @@ service cloud.firestore {
     }
 
     function isValidBlogPost(data) {
-      return data.title is string && data.title.size() > 0 && data.title.size() <= 200
-        && (!('slug' in data) || (data.slug is string && data.slug.size() <= 200))
-        && (!('excerpt' in data) || (data.excerpt is string && data.excerpt.size() <= 1000))
-        && (!('content' in data) || (data.content is string && data.content.size() <= 50000))
-        && (!('image' in data) || (data.image is string && data.image.size() <= 2000));
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 300
+        && (!('slug' in data) || (data.slug is string && data.slug.size() <= 300))
+        && (!('excerpt' in data) || (data.excerpt is string && data.excerpt.size() <= 3000))
+        && (!('content' in data) || (data.content is string && data.content.size() <= 100000))
+        && (!('coverImageUrl' in data) || (data.coverImageUrl is string && data.coverImageUrl.size() <= 3000))
+        && (!('image' in data) || (data.image is string && data.image.size() <= 3000))
+        && (!('category' in data) || (data.category is string && data.category.size() <= 200))
+        && (!('authorName' in data) || (data.authorName is string && data.authorName.size() <= 200))
+        && (!('author' in data) || (data.author is string && data.author.size() <= 200))
+        && (!('status' in data) || (data.status is string && data.status in ['published', 'draft', 'archived']))
+        && (!('tags' in data) || (data.tags is list && data.tags.size() <= 50));
     }
 
     function isValidGallery(data) {
@@ -360,7 +364,7 @@ service cloud.firestore {
 
     function isValidReview(data) {
       return data.guest is string && data.guest.size() > 0 && data.guest.size() <= 100
-        && data.service is string && data.service.size() > 0 && data.service.size() <= 200
+        && (!('service' in data) || (data['service'] is string && data['service'].size() <= 200))
         && (data.rating is int || data.rating is float) && data.rating >= 1 && data.rating <= 5
         && data.comment is string && data.comment.size() > 0 && data.comment.size() <= 2000;
     }
@@ -376,7 +380,7 @@ service cloud.firestore {
         && data.email is string && isValidEmail(data.email)
         && data.message is string && data.message.size() > 0 && data.message.size() <= 3000
         && (!('phone' in data) || (data.phone is string && data.phone.size() <= 50))
-        && (!('service' in data) || (data.service is string && data.service.size() <= 200));
+        && (!('service' in data) || (data['service'] is string && data['service'].size() <= 200));
     }
 
     function isValidBooking(data) {
@@ -504,9 +508,9 @@ service cloud.firestore {
 
     match /blog_posts/{postId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidBlogPost(request.resource.data);
-      allow update: if isAdmin() && isValidBlogPost(request.resource.data);
-      allow delete: if isAdmin();
+      allow create: if (isAdmin() || isAuthenticated()) && isValidBlogPost(request.resource.data);
+      allow update: if (isAdmin() || isAuthenticated()) && isValidBlogPost(request.resource.data);
+      allow delete: if isAdmin() || isAuthenticated();
     }
 
     match /activities/{activityId} {
@@ -654,6 +658,10 @@ service cloud.firestore {
         && request.resource.data.title is string
         && request.resource.data.title.size() <= 200;
       allow update, delete: if isAdmin();
+    }
+
+    match /mobile_push_notifications/{notifId} {
+      allow read, write: if true;
     }
 
     // ─────────────────────────────────────────────────────────────

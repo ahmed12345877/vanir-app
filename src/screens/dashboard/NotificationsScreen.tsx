@@ -107,46 +107,86 @@ export function NotificationsScreen() {
   const [securityAlerts, setSecurityAlerts] = useState(true);
   const [conciergeUpdates, setConciergeUpdates] = useState(true);
 
-  // Subscribe to real-time Firestore notifications for the authenticated user
+  // Subscribe to real-time Firestore broadcast and personal notifications
   useEffect(() => {
-    const user = auth().currentUser;
-    if (!user?.uid) return;
+    let unsubs: Array<() => void> = [];
 
+    // 1. Subscribe to broadcast mobile_push_notifications sent from Admin Hub
     try {
-      const unsub = firestore()
-        .collection('users')
-        .doc(user.uid)
-        .collection('notifications')
-        .orderBy('createdAt', 'desc')
-        .limit(25)
+      const unsubBroadcast = firestore()
+        .collection('mobile_push_notifications')
+        .orderBy('sentAt', 'desc')
+        .limit(20)
         .onSnapshot(
           snapshot => {
             if (!snapshot || snapshot.empty) return;
-            const liveList: NotificationItem[] = snapshot.docs.map(doc => {
+            const broadcastList: NotificationItem[] = snapshot.docs.map(doc => {
               const data = doc.data();
               return {
                 id: doc.id,
-                type: data.type || 'booking',
-                title: data.title || 'VIP Concierge Alert',
-                description: data.description || data.body || '',
-                time: data.time || 'Just now',
-                read: !!data.read,
+                type: 'offer',
+                title: data.title || 'VANIR VIP Alert',
+                description: data.body || '',
+                time: 'Recent',
+                read: false,
               };
             });
 
             setNotifications(prev => {
-              const liveIds = new Set(liveList.map(l => l.id));
+              const liveIds = new Set(broadcastList.map(l => l.id));
               const remaining = prev.filter(p => !liveIds.has(p.id));
-              return [...liveList, ...remaining];
+              return [...broadcastList, ...remaining];
             });
           },
           err => {
-            console.log('[NotificationsScreen] Firestore subscription non-fatal error:', err);
+            console.log('[NotificationsScreen] Broadcast subscription notice:', err);
           },
         );
-
-      return () => unsub();
+      unsubs.push(unsubBroadcast);
     } catch {}
+
+    // 2. Subscribe to user-specific notifications if signed in
+    const user = auth().currentUser;
+    if (user?.uid) {
+      try {
+        const unsubPersonal = firestore()
+          .collection('users')
+          .doc(user.uid)
+          .collection('notifications')
+          .orderBy('createdAt', 'desc')
+          .limit(25)
+          .onSnapshot(
+            snapshot => {
+              if (!snapshot || snapshot.empty) return;
+              const liveList: NotificationItem[] = snapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                  id: doc.id,
+                  type: data.type || 'booking',
+                  title: data.title || 'VIP Concierge Alert',
+                  description: data.description || data.body || '',
+                  time: data.time || 'Just now',
+                  read: !!data.read,
+                };
+              });
+
+              setNotifications(prev => {
+                const liveIds = new Set(liveList.map(l => l.id));
+                const remaining = prev.filter(p => !liveIds.has(p.id));
+                return [...liveList, ...remaining];
+              });
+            },
+            err => {
+              console.log('[NotificationsScreen] Personal subscription notice:', err);
+            },
+          );
+        unsubs.push(unsubPersonal);
+      } catch {}
+    }
+
+    return () => {
+      unsubs.forEach(u => u());
+    };
   }, []);
 
   const unreadCount = notifications.filter(n => !n.read).length;
